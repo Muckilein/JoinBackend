@@ -1,1 +1,38 @@
-<div>Hallo ihr {{contact.name}}</div>
+
+
+<script>
+    async function fetchtest(){
+        // let data = {value:tasks[0]}
+       /* let fd = new FormData();
+        fd.append('textmessage','hello');  
+        fd.append('csrfmiddlewaretoken','{{ csrf_token}}');*/
+        //const csrfToken = getCookie('csrftoken');
+        //let data = {value:'Hallo','csrfmiddlewaretoken':'{{ csrf_token}}'}
+        let data = {value:'Hallo'}
+        var csrftoken = '{{ csrf_token }}';
+        console.log(csrftoken);
+        let resp = await fetch('http://127.0.0.1:8000/contacts/',{
+        //let resp = await fetch('/contacts/',{
+            method:'POST',  
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token}}' // Include the CSRF token in the header
+            },         
+            body: JSON.stringify(data)
+        })
+        // let json = await resp.json();
+        // console.log( json);
+        console.log( resp);
+    }
+</script>
+<form onsubmit="fetchtest();return false;" method="post">
+    <!-- django code, der automatisch im Hintergrund in html umgewandelt wird -->
+    {% csrf_token %} 
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" name="textmessage" type="text" id="messageField">
+        <label class="mdl-textfield__label" for="messageField">Text...</label>
+    </div>
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+        Send
+    </button>
+</form>
