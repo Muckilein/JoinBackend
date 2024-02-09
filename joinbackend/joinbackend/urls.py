@@ -16,14 +16,21 @@ Including another URLconf
 """
 from rest_framework import routers
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from todolist.views import TodoViewSet
-from todolist.views import ContactsView
+from todolist.views import TodoItemsView
+from todolist.views import LoginView
+from todolist.views import ContactsView,TaskAssignmentsView
 
 router = routers.DefaultRouter()
-router.register(r'todos', TodoViewSet)
+router.register(r'todo', TodoViewSet)
+#router.register(r'login', LoginView.as_view())
 
 urlpatterns = [
+    path('',include(router.urls)),
     path('admin/', admin.site.urls),
-    path('contacts/', ContactsView),
+    path('login/', LoginView.as_view()),
+    path('todos/', TodoItemsView.as_view()),
+    path('contacts/', ContactsView.as_view()),
+    path('assign/', TaskAssignmentsView.as_view()),
 ]
