@@ -1,16 +1,19 @@
-from django.shortcuts import render
-from rest_framework import viewsets
+from django.shortcuts import render ,redirect
 from rest_framework import viewsets
 from .models import TodoItem,Contacts,TaskAssignments
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-#from rest_framework import authentication
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from .serializers import TodoItemSerializer,ContactsSerializer,AssignmentSerializer
+from django.contrib.auth.models import User
+from .serializers import RegisterSerializer
+from rest_framework import generics
+from django.contrib.auth import logout
+from django.http import HttpResponse
 
 # Create your views here.
 class TodoViewSet(viewsets.ModelViewSet):
@@ -19,16 +22,7 @@ class TodoViewSet(viewsets.ModelViewSet):
     """
     queryset = TodoItem.objects.all() #.order_by('date')
     serializer_class = TodoItemSerializer
-    # authentication_classes = []
-    # permission_classes =[]# [permissions.IsAuthenticated]
-    
-    # def create(self,request):
-    #    todo = TodoItem.objects.create(title= request.POST.get('title', ''), 
-    #                               description= request.POST.get('description', ''),
-    #                               user= request.user,
-    #                             )
-    #    serialized_obj = serializers.serialize('json', [todo, ]) 
-    #    return HttpResponse(serialized_obj, content_type='application/json')
+
     
 class TodoItemsView(APIView):
     authentication_classes =[TokenAuthentication]
@@ -74,10 +68,21 @@ class TaskAssignmentsView(APIView):
         taskassignments = TaskAssignments.objects.all()
         serializer = AssignmentSerializer(taskassignments, many=True)
         return Response(serializer.data)
-# def ContactsView(request):
-#   #contact,created = Contacts.objects.get_or_create(email='Maria@mail.com',iconColor='#ee27FF',phone='', name='Maria Müller',short= 'MM') 
-#   #task,created = Contacts.objects.get_or_create(email='Maria@mail.com',iconColor='#ee27FF',phone='', name='Maria Müller',short= 'MM') 
-#   print("call ContactsView")
-#   #if created:
-#   #   print('exist')  
-#   return render(request,'index.html',{'contact':'hello'})
+
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = []#(AllowAny,)
+    serializer_class = RegisterSerializer
+    
+def registerPage(request): 
+    print('kick register') 
+    # form = UserCreationForm
+    # context = { 'registerForm': form}     
+    return render(request,'register.html')
+
+def logout_view(request):
+    logout(request)
+    return HttpResponse("Answer")
+   # return render(request,'login.html')
+    # Redirect to a success page.

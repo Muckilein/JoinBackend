@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TodoItem,Contacts,TaskAssignments
+from .models import TodoItem,Contacts,TaskAssignments,SubtasksList,Subtask
 
 # class TodoAdmin(admin.ModelAdmin):    
 #     fields = ('title','date','description','category' ,'color','prio','state','checked','assignments')  
@@ -30,5 +30,14 @@ class TodoAdmin(admin.ModelAdmin):
 @admin.register(TaskAssignments)
 class TaskAssignmentsAdmin(admin.ModelAdmin): 
      fields = ('todoitem','contact')  
-     list_display = ('todoitem','contact')    
+     list_display = ('todoitem','contact') 
      
+@admin.register(SubtasksList)
+class SubtasksListAdmin(admin.ModelAdmin): 
+     fields = ('todoitem','subtask')  
+     list_display = ('todoitem','subtask')    
+        
+@admin.register(Subtask)
+class SubtaskAdmin(admin.ModelAdmin): 
+     fields = ('checked','title')  
+     list_display = ('checked','title')       

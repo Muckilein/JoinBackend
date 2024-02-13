@@ -1,0 +1,46 @@
+
+{% comment %} 
+<script>
+    async function fetchtest(){     
+        let data = {value:'Hallo'}
+        var csrftoken = '{{ csrf_token }}';
+        console.log(csrftoken);
+        let resp = await fetch('http://127.0.0.1:8000/contacts/',{       
+            method:'POST',  
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token}}' // Include the CSRF token in the header
+            },         
+            body: JSON.stringify(data)
+        })       
+        console.log( resp);
+    }
+</script>
+    <button onclick="fetchtest()">click</button> {% endcomment %}
+    
+    <form method="POST" action="/registerAPI/">
+        {% csrf_token %}
+      
+        <input type="submit" value = "Register">
+        <input type="hidden" name="redirect" value="{{redirect}}">
+        <div>
+            username<br>
+            <input name="username" type="text">
+        </div>
+        <div>
+            password<br>
+            <input name="password" type="password"></div>
+        <div>
+            repeat password<br>
+            <input name="password2" type="password">         
+        </div>
+        <div>
+            email<br>
+            <input name="email" type="email"><br>
+            first_name<br>
+            <input name="first_name" type="text"><br>
+            last_name<br>
+            <input name="last_name" type="text">
+        </div>
+        <div style="margin-top: 25px;"><button>register</button></div> 
+    </form>

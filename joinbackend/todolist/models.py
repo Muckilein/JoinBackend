@@ -25,19 +25,21 @@ class Contacts(models.Model):
           #return self.email + " "+  self.name  + " "+ self.iconColor +self.phone + " "+ self.short
         return  self.name  
              
-# class subtask(models.Model):
-#      checked = models.BooleanField(default= False)
-#      subtask = models.CharField(max_length=30,default='')
+class Subtask(models.Model):
+     checked = models.BooleanField(default= False)
+     title = models.CharField(max_length=30,default='')
+     
+     def __str__(self):
+        return self.title
 
 class TodoItem(models.Model):
    title = models.CharField(max_length=100,default='')
    description = models.CharField(max_length=1000,default='')
    date = models.DateField(default=datetime.date.today)
    assignments = models.ManyToManyField(Contacts,through='TaskAssignments')
-#    subtask = models.ManyToManyField(subtask)
+   subtask = models.ManyToManyField(Subtask,through='SubtasksList')
    category = models.CharField(max_length=30,default='')
    color=models.CharField(max_length=30,default='')
-   #maxSubs = models.CharField(max_length=30,default='')
    checked = models.BooleanField(default=False)
    prio = models.CharField(max_length=30,default='')
    state = models.CharField(max_length=30,default='')
@@ -48,8 +50,12 @@ class TodoItem(models.Model):
 class TaskAssignments(models.Model):
    todoitem = models.ForeignKey(TodoItem, on_delete=models.CASCADE)
    contact = models.ForeignKey(Contacts, on_delete=models.CASCADE)
-#    class Meta:
-#         ordering = ["date"]
+
+
+class SubtasksList(models.Model):
+   todoitem = models.ForeignKey(TodoItem, on_delete=models.CASCADE)
+   subtask = models.ForeignKey(Subtask, on_delete=models.CASCADE)
+
 
    
    
