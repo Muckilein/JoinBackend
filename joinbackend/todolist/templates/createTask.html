@@ -1,0 +1,30 @@
+
+<form method="POST" action="/createTodoAPI/">
+    {% csrf_token %}    
+  
+    <div>
+        title<br>
+        <input name="title" type="text">
+    </div>
+    <div>
+        description<br>
+        <input name="description" type="text"></div>
+    <div>
+        date<br>
+        <input name="date" type="date">         
+    </div>
+    <div>
+        category<br>
+        <input name="category" type="text"><br>
+        color<br>
+        <input name="color" type="text"><br>
+        checked
+        <input name="checked" type="checkbox"><br>
+        prio<br>
+        <input name="prio" type="text"><br>
+        state<br>
+        <input name="state" type="text"><br>
+    </div>
+    <button type="submit">erstellen</button>
+   
+</form>

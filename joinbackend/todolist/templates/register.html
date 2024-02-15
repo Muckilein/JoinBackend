@@ -1,24 +1,5 @@
 
-{% comment %} 
-<script>
-    async function fetchtest(){     
-        let data = {value:'Hallo'}
-        var csrftoken = '{{ csrf_token }}';
-        console.log(csrftoken);
-        let resp = await fetch('http://127.0.0.1:8000/contacts/',{       
-            method:'POST',  
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token}}' // Include the CSRF token in the header
-            },         
-            body: JSON.stringify(data)
-        })       
-        console.log( resp);
-    }
-</script>
-    <button onclick="fetchtest()">click</button> {% endcomment %}
-    
-    <form method="POST" action="/registerAPI/">
+    <form method="POST" action="/createTodoView/">
         {% csrf_token %}
       
         <input type="submit" value = "Register">

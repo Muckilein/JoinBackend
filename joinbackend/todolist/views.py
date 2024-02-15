@@ -14,6 +14,8 @@ from .serializers import RegisterSerializer
 from rest_framework import generics
 from django.contrib.auth import logout
 from django.http import HttpResponse
+from datetime import date
+import json
 
 # Create your views here.
 class TodoViewSet(viewsets.ModelViewSet):
@@ -27,7 +29,6 @@ class TodoViewSet(viewsets.ModelViewSet):
 class TodoItemsView(APIView):
     authentication_classes =[TokenAuthentication]
     permission_classes =[IsAuthenticated]
-
 
     def get(self, request, format=None):
         todos = TodoItem.objects.all()
@@ -52,12 +53,11 @@ class ContactsView(APIView):
     authentication_classes =[]#[TokenAuthentication]
     permission_classes =[]#[IsAuthenticated]
 
-
     def get(self, request, format=None):
         contacts = Contacts.objects.all()
         serializer = ContactsSerializer(contacts, many=True)
-        return Response(serializer.data)
-    
+        return Response(serializer.data)   
+
     
 class TaskAssignmentsView(APIView):
     authentication_classes =[]#[TokenAuthentication]
@@ -76,13 +76,34 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     
 def registerPage(request): 
-    print('kick register') 
-    # form = UserCreationForm
-    # context = { 'registerForm': form}     
+    print('kick register')        
     return render(request,'register.html')
 
 def logout_view(request):
     logout(request)
     return HttpResponse("Answer")
    # return render(request,'login.html')
-    # Redirect to a success page.
+   # Redirect to a success page.
+    
+def createTodoView(request):   
+    return render(request,'createTask.html')
+
+class createTodoViewAPI(generics.CreateAPIView):
+    print('call createTodoViewAPI')  
+    #todo = TodoItem.objects.create(title = 'Test1',description="test1",date=date.today(),category='Sales',color='#ab234',checked=False,prio='1',state ='1')
+    queryset = TodoItem.objects.all()
+    permission_classes = []
+    serializer_class = TodoItemSerializer  
+    def create(self, request):
+         print('call create')
+         data = json.loads(request.body)      
+        #todo = TodoItem.objects.create(title = request.POST.get('title'),description=request.POST.get('description'),date=request.POST.get('date'),category=request.POST.get('category'),color=request.POST.get('color'),checked=False,prio=request.POST.get('prio'),state =request.POST.get('state'))
+         todo = TodoItem.objects.create(title = data['title'],description=data['description'],date=data['date'],category= data['category'],color= data['color'],checked=False,prio= data['prio'],state = data['state'])
+         serializer = TodoItemSerializer(todo, many=False)
+         return Response(serializer.data)
+    def get(self, request, format=None):
+        todos = TodoItem.objects.all()
+        print('get all todos')
+        serializer = TodoItemSerializer(todos, many=True)
+        return Response(serializer.data)  
+        

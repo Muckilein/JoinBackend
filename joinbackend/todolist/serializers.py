@@ -3,6 +3,7 @@ from rest_framework import serializers
 from .models import TodoItem,Contacts,TaskAssignments
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
+from .models import Contacts
 
 # class UserSerializer(serializers.HyperlinkedModelSerializer):
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -18,6 +19,10 @@ class TodoItemSerializer(serializers.ModelSerializer):
         model = TodoItem
         #fields = ['id','title']
         fields = '__all__'
+        #def create(self, request):
+    #     # Note the use of `get_queryset()` instead of `self.queryset`
+         # todo = TodoItem.objects.create(title = request.POST.get('title'),description=request.POST.get('description'),date=request.POST.get('date'),category=request.POST.get('category'),color=request.POST.get('color'),checked=False,prio=request.POST.get('prio'),state =request.POST.get('state'))
+    #     return todo
         
 class ContactsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -59,5 +64,10 @@ class RegisterSerializer(serializers.ModelSerializer):
     )
     user.set_password(validated_data['password'])
     user.save()
+    contacts = Contacts.objects.create(email = user.email,iconColor="#9327FF",phone = "Phone Number ",name = user.first_name+user.last_name,short =user.first_name[0]+user.last_name[0],user = user)
     return user
-
+  
+  # class TodoItemSerializerClass(serializers.ModelSerializer):
+  #   def create(self, values):
+  #      todo = TodoItem.objects.create(title = values['title'],description= values['description'],date= values['date'],category= values['category'],color= values['color'],checked= values['checked'],prio= values['prio'],state = values['state'])
+  #      return todo
