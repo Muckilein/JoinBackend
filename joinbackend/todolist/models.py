@@ -36,8 +36,8 @@ class TodoItem(models.Model):
    title = models.CharField(max_length=100,default='')
    description = models.CharField(max_length=1000,default='')
    date = models.DateField(default=datetime.date.today)
-   assignments = models.ManyToManyField(Contacts,through='TaskAssignments')
-   subtask = models.ManyToManyField(Subtask,through='SubtasksList')
+   assignments = models.ManyToManyField(Contacts,through='TaskAssignments') #Many-to-Many
+   subtask = models.ManyToManyField(Subtask,through='SubtasksList') #Many-to-Many
    category = models.CharField(max_length=30,default='')
    color=models.CharField(max_length=30,default='')
    checked = models.BooleanField(default=False)
@@ -50,12 +50,18 @@ class TodoItem(models.Model):
 class TaskAssignments(models.Model):
    todoitem = models.ForeignKey(TodoItem, on_delete=models.CASCADE)
    contact = models.ForeignKey(Contacts, on_delete=models.CASCADE)
+   
+   def __str__(self):
+       return self.contact.name
+   
 
 
 class SubtasksList(models.Model):
    todoitem = models.ForeignKey(TodoItem, on_delete=models.CASCADE)
    subtask = models.ForeignKey(Subtask, on_delete=models.CASCADE)
-
+   
+   def __str__(self):
+       return self.subtask.title
 
    
    

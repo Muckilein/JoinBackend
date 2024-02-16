@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group, User
 from rest_framework import serializers
-from .models import TodoItem,Contacts,TaskAssignments
+from .models import TodoItem,Contacts,TaskAssignments,Subtask
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from .models import Contacts
@@ -16,23 +16,37 @@ from rest_framework import serializers
 
 class TodoItemSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TodoItem
-        #fields = ['id','title']
+        model = TodoItem     
         fields = '__all__'
-        #def create(self, request):
-    #     # Note the use of `get_queryset()` instead of `self.queryset`
-         # todo = TodoItem.objects.create(title = request.POST.get('title'),description=request.POST.get('description'),date=request.POST.get('date'),category=request.POST.get('category'),color=request.POST.get('color'),checked=False,prio=request.POST.get('prio'),state =request.POST.get('state'))
-    #     return todo
         
-class ContactsSerializer(serializers.ModelSerializer):
+class TodoNameSerializer(serializers.ModelSerializer):
     class Meta:
+        model = TodoItem     
+        fields = ['id','title']
+    
+        
+class ContactsSerializer(serializers.ModelSerializer): 
+      class Meta:
         model = Contacts
         fields = '__all__'
         
+class ContactsNameSerializer(serializers.ModelSerializer): 
+      class Meta:
+        model = Contacts
+        fields = ['id','name']
+        
+class SubtasksSerializer(serializers.ModelSerializer): 
+      class Meta:
+        model = Subtask
+        fields = '__all__'
+        
 class AssignmentSerializer(serializers.ModelSerializer):
+    contact = ContactsNameSerializer (many=False)  
+    todoitem = TodoNameSerializer (many=False) 
     class Meta:
         model = TaskAssignments
-        fields = '__all__'
+        #fields = '__all__'
+        fields = ['contact','todoitem']
 
 class RegisterSerializer(serializers.ModelSerializer):
   email = serializers.EmailField(
