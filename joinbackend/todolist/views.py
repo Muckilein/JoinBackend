@@ -1,6 +1,6 @@
 from django.shortcuts import render ,redirect
 from rest_framework import viewsets
-from .models import TodoItem,Contacts,TaskAssignments,Subtask
+from .models import TodoItem,Contacts,TaskAssignments,Subtask,SubtasksList
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -25,33 +25,7 @@ class TodoViewSet(viewsets.ModelViewSet):
     queryset = TodoItem.objects.all() #.order_by('date')
     serializer_class = TodoItemSerializer
 
-    
-class TodoItemsView(APIView):
-    authentication_classes =[]#[TokenAuthentication]
-    permission_classes =[]#[IsAuthenticated]
-
-    def get(self, request, format=None):
-        todos = TodoItem.objects.all()       
-        serializer = TodoItemSerializer(todos, many=True)
-       
-        todoData = serializer.data
-        for t in todoData:
-            if t['assignments'] !=[]:
-                x = len(t['assignments'])
-                for i in range(0, x):
-                   id = t['assignments'][i]
-                   #print(getContactsbyId(id))
-                   t['assignments'][i] = getContactsbyId(id) 
-            if t['subtask'] !=[]:
-                x = len(t['subtask'])
-                for i in range(0, x):
-                   id = t['subtask'][i]
-                   #print(getContactsbyId(id))
-                   t['subtask'][i] = getSubtaskbyId(id) 
-                   
-            
-        return Response(serializer.data)
-    
+        
 def getContactsbyId(id):
     contact = Contacts.objects.all()
     serializerContact = ContactsNameSerializer(contact, many=True)
@@ -67,8 +41,8 @@ def getSubtaskbyId(id):
     subData = subSerilizer.data             
     for s in  subData:
         if s['id']==id:
-          return s['title'] 
-    return ''  
+          return {'title':s['title'] , 'checked': s['checked']}
+    return  {'title':'' , 'checked': False}  
     
    
 
@@ -125,8 +99,71 @@ def logout_view(request):
 def createTodoView(request):   
     return render(request,'createTask.html')
 
+def makeAssigments(ass, todo):    
+    taskAssignments = TaskAssignments.objects.filter(todoitem = todo)
+    serializer = AssignmentSerializer(taskAssignments, many = True)
+    data = serializer.data
+    for a in ass:
+       if contain(data,a) ==False:
+           print('ist created')
+           contact = Contacts.objects.filter(pk = a['id'])
+           TaskAssignments.objects.create(todoitem = todo,contact = contact[0])
+       else:
+           print('exist')
+
+def contain(databaseAss,a):
+    for dataAss in databaseAss:
+        if dataAss['contact']['name']==a['name']:
+            return True
+    return False
+    
+
+def makeSubtask(subs, todo):    
+    for s in subs:
+        if s['id']=='null':
+            print('call null make Subtask')
+            sub = Subtask.objects.create(title=s['title'], checked = s['checked'])        
+            sub.save()           
+            ass = SubtasksList.objects.create(subtask= sub,todoitem = todo)
+            ass.save()                
+   
+
+class editTodoViewAPI(generics.CreateAPIView):
+    print('call createTodoViewAPI')  
+    authentication_classes =[TokenAuthentication]
+    permission_classes =[IsAuthenticated]
+    #todo = TodoItem.objects.create(title = 'Test1',description="test1",date=date.today(),category='Sales',color='#ab234',checked=False,prio='1',state ='1')
+    queryset = TodoItem.objects.all()
+    permission_classes = []
+    serializer_class = TodoItemSerializer  
+    # Create wird automatisch bei POST aufgerufen
+    def create(self, request):
+         print('call edit')
+         # wichtig in request.POST.get('title') sind nur Information gespeichert, die mit einem Form gepostet wurden 
+         data = json.loads(request.body)  
+         id = data['id']  
+         todo = TodoItem.objects.filter(pk = id)[0]
+         todo.title = data['title']
+         todo.description = data['description']
+         todo.date = data['date']
+         todo.category = data['category']
+         todo.prio = data['prio']
+         todo.state = data['state']
+        # print(data)
+         makeSubtask(data['subtask'],todo)
+         makeAssigments(data['assignments'],todo)
+         todo.save()
+        # serializer = TodoItemSerializer(todo, many=False)     
+         #return Response(serializer.data)
+         return Response('ok')
+     
+
+            
+
 class createTodoViewAPI(generics.CreateAPIView):
     print('call createTodoViewAPI')  
+    authentication_classes =[]#[TokenAuthentication]
+    permission_classes =[]#[IsAuthenticated]
     #todo = TodoItem.objects.create(title = 'Test1',description="test1",date=date.today(),category='Sales',color='#ab234',checked=False,prio='1',state ='1')
     queryset = TodoItem.objects.all()
     permission_classes = []
@@ -139,11 +176,31 @@ class createTodoViewAPI(generics.CreateAPIView):
         #todo = TodoItem.objects.create(title = request.POST.get('title'),description=request.POST.get('description'),date=request.POST.get('date'),category=request.POST.get('category'),color=request.POST.get('color'),checked=False,prio=request.POST.get('prio'),state =request.POST.get('state'))
          todo = TodoItem.objects.create(title = data['title'],description=data['description'],date=data['date'],category= data['category'],color= data['color'],checked=False,prio= data['prio'],state = data['state'])
          serializer = TodoItemSerializer(todo, many=False) # wenn hier True stehen würde kommt not iterable error
+         todoData = serializer.data
+         makeSubtask(data['subtask'],todo)
+         setAssignmentandSubs(todoData)
          return Response(serializer.data)
-    # Wird autimatisch bei GET aufgerufen
+    # Wird autimatisch bei GET aufgerufen  
     def get(self, request, format=None):
-        todos = TodoItem.objects.all()
-        print('get all todos')
-        serializer = TodoItemSerializer(todos, many=True)
-        return Response(serializer.data)  
-        
+        todos = TodoItem.objects.all()       
+        serializer = TodoItemSerializer(todos, many=True)       
+        todoData = serializer.data
+        for t in todoData:          
+            setAssignmentandSubs(t)              
+        return Response(serializer.data) 
+
+def setAssignmentandSubs(t):
+     print('call setAssignmentandSubs')
+     if t['assignments'] !=[]:
+                x = len(t['assignments'])
+                for i in range(0, x):
+                   id = t['assignments'][i]                  
+                  # t['assignments'][i] = getContactsbyId(id) 
+                   t['assignments'][i] = { 'id':id ,'name': getContactsbyId(id)} 
+     if t['subtask'] !=[]:
+                x = len(t['subtask'])
+                for i in range(0, x):
+                   id = t['subtask'][i] 
+                   s = getSubtaskbyId(id) 
+                   print(s)           
+                   t['subtask'][i] = {'id':id, 'title': s['title'],'checked': s['checked'] } 
