@@ -16,6 +16,7 @@ from django.contrib.auth import logout
 from django.http import HttpResponse
 from datetime import date
 import json
+from django.views.generic.detail import DetailView
 
 # Create your views here.
 class TodoViewSet(viewsets.ModelViewSet):
@@ -92,8 +93,8 @@ def registerPage(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponse("Answer")
-   # return render(request,'login.html')
+    #return HttpResponse("Answer")
+    return render(request,'login.html')
    # Redirect to a success page.
     
 def createTodoView(request):   
@@ -204,3 +205,6 @@ def setAssignmentandSubs(t):
                    s = getSubtaskbyId(id) 
                    print(s)           
                    t['subtask'][i] = {'id':id, 'title': s['title'],'checked': s['checked'] } 
+
+
+

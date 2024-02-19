@@ -37,6 +37,7 @@ urlpatterns = [
     path('register/', registerPage),  #only for testing  is replaced by frontend
     path('logout/', logout_view),
     path('createTodo/', createTodoView), # only for testing  is replaced by frontend
-    path('createTodoAPI/', createTodoViewAPI.as_view()) , 
+    path('createTodoAPI/', createTodoViewAPI.as_view()) ,    
+   # path('createTodoAPI/<pk>/', createTodoViewAPI.as_view()) ,  
     path('editTodoAPI/', editTodoViewAPI.as_view())    
 ]
