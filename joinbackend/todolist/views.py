@@ -138,26 +138,23 @@ class editTodoViewAPI(generics.CreateAPIView):
     permission_classes = []
     serializer_class = TodoItemSerializer  
     # Create wird automatisch bei POST aufgerufen
-    def create(self, request):
-         print('call edit')
+    def put(self, request,pk):
+         print('call put')
          # wichtig in request.POST.get('title') sind nur Information gespeichert, die mit einem Form gepostet wurden 
-         data = json.loads(request.body)  
-         id = data['id']  
-         todo = TodoItem.objects.filter(pk = id)[0]
+         data = json.loads(request.body)
+         todo = TodoItem.objects.filter(id=pk)[0]
          todo.title = data['title']
          todo.description = data['description']
          todo.date = data['date']
          todo.category = data['category']
          todo.prio = data['prio']
-         todo.state = data['state']
-        # print(data)
+         todo.state = data['state']       
          makeSubtask(data['subtask'],todo)
          makeAssigments(data['assignments'],todo)
          todo.save()
-        # serializer = TodoItemSerializer(todo, many=False)     
-         #return Response(serializer.data)
-         return Response('ok')
-     
+         serializer = TodoItemSerializer(todo, many=False)     
+         return Response(serializer.data)
+         #return Response('ok')     
 
             
 
@@ -189,7 +186,7 @@ class createTodoViewAPI(generics.CreateAPIView):
         for t in todoData:          
             setAssignmentandSubs(t)              
         return Response(serializer.data) 
-
+   
 def setAssignmentandSubs(t):
      print('call setAssignmentandSubs')
      if t['assignments'] !=[]:
@@ -202,9 +199,31 @@ def setAssignmentandSubs(t):
                 x = len(t['subtask'])
                 for i in range(0, x):
                    id = t['subtask'][i] 
-                   s = getSubtaskbyId(id) 
-                   print(s)           
+                   s = getSubtaskbyId(id)                             
                    t['subtask'][i] = {'id':id, 'title': s['title'],'checked': s['checked'] } 
 
-
-
+class createTodoViewAPIDetail(APIView):
+    def get(self,request,pk):  #self ist wichtig
+        print(pk)
+        todos = TodoItem.objects.filter(id = pk)             
+        serializer = TodoItemSerializer(todos[0], many=False)       
+        todoData = serializer.data#[0]                 
+        setAssignmentandSubs(todoData)              
+        return Response(todoData)
+    def put(self, request,pk):
+         print('call put')
+         # wichtig in request.POST.get('title') sind nur Information gespeichert, die mit einem Form gepostet wurden 
+         data = json.loads(request.body)
+         todo = TodoItem.objects.filter(id=pk)[0]
+         todo.title = data['title']
+         todo.description = data['description']
+         todo.date = data['date']
+         todo.category = data['category']
+         todo.prio = data['prio']
+         todo.state = data['state']       
+         makeSubtask(data['subtask'],todo)
+         makeAssigments(data['assignments'],todo)
+         todo.save()
+         serializer = TodoItemSerializer(todo, many=False)     
+         return Response(serializer.data)
+ 
