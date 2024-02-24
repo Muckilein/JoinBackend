@@ -20,7 +20,7 @@ from django.urls import path, include
 from todolist.views import TodoViewSet
 #from todolist.views import TodoItemsView
 from todolist.views import LoginView
-from todolist.views import ContactsView,TaskAssignmentsView,RegisterView,createTodoViewAPI,registerPage,logout_view,createTodoView,editTodoViewAPI,createTodoViewAPIDetail
+from todolist.views import ContactsView,RegisterView,createTodoViewAPI,Logout_view,createTodoViewAPIDetail
 
 router = routers.DefaultRouter()
 router.register(r'todo', TodoViewSet)
@@ -32,12 +32,12 @@ urlpatterns = [
     path('login/', LoginView.as_view()),
    # path('todos/', TodoItemsView.as_view()),
     path('contacts/', ContactsView.as_view()),
-    path('assign/', TaskAssignmentsView.as_view()),
+    #path('assign/', TaskAssignmentsView.as_view()),
     path('registerAPI/', RegisterView.as_view(), name='auth_register'),
-    path('register/', registerPage),  #only for testing  is replaced by frontend
-    path('logout/', logout_view),
-    path('createTodo/', createTodoView), # only for testing  is replaced by frontend
+   # path('register/', registerPage),  #only for testing  is replaced by frontend
+    path('logout/', Logout_view.as_view()),
+   # path('createTodo/', createTodoView), # only for testing  is replaced by frontend
     path('createTodoAPI/', createTodoViewAPI.as_view()) ,    
     path('createTodoAPI/<int:pk>/', createTodoViewAPIDetail.as_view()) ,  
-    path('editTodoAPI/<int:pk>/', editTodoViewAPI.as_view())    
+   # path('editTodoAPI/<int:pk>/', editTodoViewAPI.as_view())    
 ]

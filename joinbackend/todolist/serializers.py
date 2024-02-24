@@ -39,7 +39,7 @@ class SubtasksSerializer(serializers.ModelSerializer):
       class Meta:
         model = Subtask
         fields = '__all__'
-        
+      
 class AssignmentSerializer(serializers.ModelSerializer):
     contact = ContactsNameSerializer (many=False)  
     todoitem = TodoNameSerializer (many=False) 
@@ -48,6 +48,10 @@ class AssignmentSerializer(serializers.ModelSerializer):
         #fields = '__all__'
         fields = ['contact','todoitem']
 
+"""
+Registers a new User, when all the given data are valid.
+Also creates a Contacts object
+"""
 class RegisterSerializer(serializers.ModelSerializer):
   email = serializers.EmailField(
     required=True,
