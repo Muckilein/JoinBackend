@@ -31,6 +31,12 @@ class Subtask(models.Model):
      
      def __str__(self):
         return self.title
+     
+class Category(models.Model):     
+     title = models.CharField(max_length=50,default='')
+     
+     def __str__(self):
+        return self.title
 
 class TodoItem(models.Model):
    title = models.CharField(max_length=100,default='')
@@ -38,7 +44,8 @@ class TodoItem(models.Model):
    date = models.DateField(default=datetime.date.today)
    assignments = models.ManyToManyField(Contacts,through='TaskAssignments') #Many-to-Many
    subtask = models.ManyToManyField(Subtask,through='SubtasksList') #Many-to-Many
-   category = models.CharField(max_length=30,default='')
+   #category = models.CharField(max_length=30,default='')
+   category = models.ForeignKey(Category, on_delete=models.CASCADE)
    color=models.CharField(max_length=30,default='')
    checked = models.BooleanField(default=False)
    prio = models.CharField(max_length=30,default='')

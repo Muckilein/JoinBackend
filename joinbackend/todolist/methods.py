@@ -1,6 +1,6 @@
 
-from .serializers import AssignmentSerializer,ContactsNameSerializer,SubtasksSerializer
-from .models import TodoItem,Contacts,TaskAssignments,Subtask,SubtasksList
+from .serializers import AssignmentSerializer,ContactsNameSerializer,SubtasksSerializer,CategorySerializer
+from .models import TodoItem,Contacts,TaskAssignments,Subtask,SubtasksList,Category
 """
 If a given user is not already in the assignment list a new assignments for the given todo is created
 """
@@ -33,14 +33,14 @@ Creates new objects that stores that links the previously created subtask to the
 def makeSubtask(subs, todo):    
     for s in subs:
         if s['id']=='null':
-            print('call null make Subtask')
+            #print('call null make Subtask')
             sub = Subtask.objects.create(title=s['title'], checked = s['checked'])        
             sub.save()           
             ass = SubtasksList.objects.create(subtask= sub,todoitem = todo)
             ass.save()
         else:
-            print("id is")
-            print(s['id'])
+            #print("id is")
+            #print(s['id'])
             su =  Subtask.objects.filter(pk = s['id'])[0]
             su.checked =  s['checked'] 
             su.save()                          
@@ -83,4 +83,20 @@ def setAssignmentandSubs(t):
                    id = t['subtask'][i] 
                    s = getSubtaskbyId(id)                             
                    t['subtask'][i] = {'id':id, 'title': s['title'],'checked': s['checked'] } 
+                   
+def setCategory(d):
+    print(d['category'])
+    id = d['category']
+    cat = Category.objects.filter(id = id)[0]
+    # serializer = CategorySerializer(cat, many=False)       
+    # categoryData = serializer.data 
+    categoryData=getSerializedCategory(cat,False)
+    category = {'id':id, 'title':categoryData['title']}
+    d['category'] = category
+    
+def getSerializedCategory(category,bool):
+    serializer = CategorySerializer(category, many=bool)       
+    categoryData = serializer.data 
+    return categoryData
+    
                    
