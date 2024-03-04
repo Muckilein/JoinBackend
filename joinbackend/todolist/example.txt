@@ -1,0 +1,34 @@
+Beispiell um mit 
+http://127.0.0.1:8000/createTodoAPI/
+einen neuen Task zu erstellen.
+Merke bei einem neues Subtask muss bei id "null" angegeben werden
+
+{
+        "id":0,
+        "title": "Registrieren2",
+        "description": "Registrieren bei App",
+        "date": "2024-03-16",
+        "color": "#3e76dd",
+        "checked": false,
+        "prio": "1",
+        "state": "2",
+        "category": {
+            "id": 1,
+            "title": "Sale"
+        },
+        "assignments": [
+            {
+                "id": 1,
+                "name": "Julia"
+            }
+           
+        ],
+        "subtask": [
+            {
+                "id": "null",
+                "title": "anmelden",
+                "checked": false
+            }
+         
+        ]
+    }
