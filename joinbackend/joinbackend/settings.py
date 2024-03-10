@@ -27,9 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1','localhost']
 
-CORS_ALLOWED_ORIGINS = ['http://localhost:4200']
+CORS_ALLOWED_ORIGINS = ['http://localhost:4200','http://localhost:5500','http://127.0.0.1:5500']
 # Application definition
 CORS_ALLOWED_ALL_ORIGINS = True
+
+CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'DELETE']
 
 INSTALLED_APPS = [
     'django.contrib.admin',

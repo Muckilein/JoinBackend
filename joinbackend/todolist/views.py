@@ -49,8 +49,8 @@ class LoginView(ObtainAuthToken):
 Return a JSON of all Contacts
 """       
 class ContactsView(APIView):
-    authentication_classes =[TokenAuthentication]
-    permission_classes =[IsAuthenticated]
+    authentication_classes =[]#[TokenAuthentication]
+    permission_classes =[]#[IsAuthenticated]
 
     def get(self, request, format=None):
         contacts = Contacts.objects.all()
