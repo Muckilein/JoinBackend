@@ -44,5 +44,5 @@ class SubtaskAdmin(admin.ModelAdmin):
      
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin): 
-     fields = ('title',)  #, ist wichtig
-     list_display = ('title',)       
+     fields = ('title','color')  #, ist wichtig
+     list_display = ('title','color')       

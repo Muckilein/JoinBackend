@@ -136,7 +136,8 @@ class createTodoViewAPIDetail(APIView):
          print('call put')
          # wichtig in request.POST.get('title') sind nur Information gespeichert, die mit einem Form gepostet wurden
          
-         data = json.loads(request.body)      
+         data = json.loads(request.body)
+         print(data)      
          category = getCategory(data['category']['title'])        
        
          todo = TodoItem.objects.filter(id=pk)[0]
@@ -177,7 +178,7 @@ class categoryAPI(generics.CreateAPIView):
     
     def create(self,request):
         data = json.loads(request.body)
-        category = Category.objects.create(title= data['title']) 
+        category = Category.objects.create(title= data['title'], color = data['color']) 
         categoryData = getSerializedCategory(category,False)     
         return Response(categoryData)
     def get(self,reqiest):
