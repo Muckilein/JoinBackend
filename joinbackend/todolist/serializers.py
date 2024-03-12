@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group, User
 from rest_framework import serializers
-from .models import TodoItem,Contacts,TaskAssignments,Subtask,Category
+from .models import TodoItem,Contacts,TaskAssignments,Subtask,Category,SubtasksList
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from .models import Contacts
@@ -44,6 +44,11 @@ class ContactsNameSerializer(serializers.ModelSerializer):
 class SubtasksSerializer(serializers.ModelSerializer): 
       class Meta:
         model = Subtask
+        fields = '__all__'
+        
+class SubtasksListSerializer(serializers.ModelSerializer): 
+      class Meta:
+        model = SubtasksList
         fields = '__all__'
       
 class AssignmentSerializer(serializers.ModelSerializer):

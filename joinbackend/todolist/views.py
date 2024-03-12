@@ -148,7 +148,9 @@ class createTodoViewAPIDetail(APIView):
          todo.prio = data['prio']
          todo.state = data['state']       
          makeSubtask(data['subtask'],todo)
+         deleteSubtask(data['subtask'],todo)
          makeAssigments(data['assignments'],todo)
+         deleteAssigment(data['assignments'],todo)         
          todo.save()
          serializer = TodoItemSerializer(todo, many=False)
          todoData = serializer.data        

@@ -1,13 +1,16 @@
 
-from .serializers import AssignmentSerializer,ContactsNameSerializer,SubtasksSerializer,CategorySerializer
+from .serializers import AssignmentSerializer,ContactsNameSerializer,SubtasksSerializer,CategorySerializer,SubtasksListSerializer
 from .models import TodoItem,Contacts,TaskAssignments,Subtask,SubtasksList,Category
 """
-If a given user is not already in the assignment list a new assignments for the given todo is created
+If a given user is not already in the assignment list a new assignments for the given todo is created.
 """
 def makeAssigments(ass, todo):    
     taskAssignments = TaskAssignments.objects.filter(todoitem = todo)
     serializer = AssignmentSerializer(taskAssignments, many = True)
     data = serializer.data
+    print("pint data")
+    print(data)
+    print(ass)
     for a in ass:
        if contain(data,a) ==False:
            print('ist created')
@@ -17,14 +20,60 @@ def makeAssigments(ass, todo):
            print('exist')
            
 """
-returns wheather or not a given user is already in the assignment list if a titi
+returns wheather or not a given user is already in the assignment list of a task
 """
 def contain(databaseAss,a):
     for dataAss in databaseAss:
-        if dataAss['contact']['name']==a['name']:
+        if dataAss['contact']['id']==a['id']:
             return True
     return False
 
+def contain2(DBa,ass):
+    for a in ass:
+        if a['id']== DBa['contact']['id'] :
+           return True
+    return False
+
+"""
+Deletes all assignments that are no longer assigned to the given todo
+"""
+def deleteAssigment(ass,todo):
+    taskAssignments = TaskAssignments.objects.filter(todoitem = todo)
+    serializer = AssignmentSerializer(taskAssignments, many = True)
+    databaseAss = serializer.data
+    i=-1
+    for dataAss in databaseAss:
+        i=i+1
+        if not contain2(dataAss,ass): 
+           print('delete',taskAssignments[i])         
+           taskAss = taskAssignments[i]
+           taskAss.delete()
+
+def containSub(DBa,subss):
+    print("DBA")
+    print(DBa)
+    print(subss)
+    for a in subss:      
+        if a['id']== DBa['subtask']:
+           return True
+    return False  
+ 
+"""
+Deletes all assignments that are no longer assigned to the given todo
+"""
+def deleteSubtask(subss,todo):
+    subtask = SubtasksList.objects.filter(todoitem = todo)
+    serializer = SubtasksListSerializer(subtask, many = True)
+    databaseSubs = serializer.data   
+    i=-1
+    for dataSubs in databaseSubs:
+        i=i+1
+        if not containSub(dataSubs,subss):                 
+           task= subtask[i]
+           task.delete()
+
+
+       
     
 """
 Creates new subtasks with the information stored in subs.
@@ -32,15 +81,12 @@ Creates new objects that stores that links the previously created subtask to the
 """
 def makeSubtask(subs, todo):    
     for s in subs:
-        if s['id']=='null':
-            #print('call null make Subtask')
+        if s['id']=='null':          
             sub = Subtask.objects.create(title=s['title'], checked = s['checked'])        
             sub.save()           
             ass = SubtasksList.objects.create(subtask= sub,todoitem = todo)
             ass.save()
-        else:
-            #print("id is")
-            #print(s['id'])
+        else:          
             su =  Subtask.objects.filter(pk = s['id'])[0]
             su.checked =  s['checked'] 
             su.save()                          
