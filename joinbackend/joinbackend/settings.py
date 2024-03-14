@@ -43,8 +43,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'todolist',
     'rest_framework.authtoken',
+    'rest_auth', 
+    'rest_auth.registration', 
+    # 'allauth',
+    # 'allauth.account',     
     'corsheaders'
 ]
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -133,7 +138,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        #'todolist.views.EmailOrUsernameAuthentication',# Stellen Sie sicher, dass Sie den Pfad zu Ihrer Authentifizierungsklasse angeben
+        'rest_framework.authentication.TokenAuthentication'
+        # 'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
     ]
 }

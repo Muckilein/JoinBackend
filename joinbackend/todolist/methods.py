@@ -1,6 +1,10 @@
 
 from .serializers import AssignmentSerializer,ContactsNameSerializer,SubtasksSerializer,CategorySerializer,SubtasksListSerializer
 from .models import TodoItem,Contacts,TaskAssignments,Subtask,SubtasksList,Category
+
+from rest_framework import authentication, exceptions
+from django.contrib.auth import get_user_model
+
 """
 If a given user is not already in the assignment list a new assignments for the given todo is created.
 """
@@ -25,7 +29,9 @@ returns wheather or not a given user is already in the assignment list of a task
 def contain(databaseAss,a):
     for dataAss in databaseAss:
         if dataAss['contact']['id']==a['id']:
-            return True
+            print('true')            
+            return True    
+    print('false')
     return False
 
 def contain2(DBa,ass):
@@ -84,12 +90,20 @@ def makeSubtask(subs, todo):
         if s['id']=='null':          
             sub = Subtask.objects.create(title=s['title'], checked = s['checked'])        
             sub.save()           
-            ass = SubtasksList.objects.create(subtask= sub,todoitem = todo)
+            ass = SubtasksList.objects.create(todoitem = todo,subtask = sub)
+            subbis = SubtasksList.objects.create(todoitem = todo,subtask = sub)
+            print('SubtasksList new Object')
+            print(ass)
+            print('Save subtask')
+            subbis.subtask = sub
+            subbis.save()
             ass.save()
         else:          
             su =  Subtask.objects.filter(pk = s['id'])[0]
             su.checked =  s['checked'] 
-            su.save()                          
+            su.save() 
+       
+                                    
 """
 Returns the name of a contscts with the given id
 """       
@@ -145,4 +159,6 @@ def getSerializedCategory(category,bool):
     categoryData = serializer.data 
     return categoryData
     
-                   
+
+
+

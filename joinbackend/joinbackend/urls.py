@@ -41,5 +41,7 @@ urlpatterns = [
     path('createTodoAPI/<int:pk>/', createTodoViewAPIDetail.as_view()) ,  
     path('categoryAPI/', categoryAPI.as_view()) ,  
     path('categoryAPI/<int:pk>/', categoryAPIDetail.as_view()) ,
-   # path('editTodoAPI/<int:pk>/', editTodoViewAPI.as_view())    
+   # path('editTodoAPI/<int:pk>/', editTodoViewAPI.as_view())  
+    #path('auth/', include('rest_auth.urls')),
+    #path('auth/registration/', include('rest_auth.registration.urls')) 
 ]

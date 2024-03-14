@@ -27,7 +27,7 @@ class Contacts(models.Model):
              
 class Subtask(models.Model):
      checked = models.BooleanField(default= False)
-     title = models.CharField(max_length=30,default='')
+     title = models.CharField(max_length=30,default='Subtask')
      
      def __str__(self):
         return self.title
@@ -69,7 +69,7 @@ class SubtasksList(models.Model):
    subtask = models.ForeignKey(Subtask, on_delete=models.CASCADE)
    
    def __str__(self):
-       return self.subtask.title
+       return (self.subtask.title + " " +self.todoitem.title)
 
    
    

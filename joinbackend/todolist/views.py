@@ -32,7 +32,7 @@ class TodoViewSet(viewsets.ModelViewSet):
 Loggs in a user with the given credentials.
 Returns a JSON with the token, user_id and email
 """
-class LoginView(ObtainAuthToken): 
+class LoginView2(ObtainAuthToken): 
    def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
@@ -44,6 +44,12 @@ class LoginView(ObtainAuthToken):
             'user_id': user.pk,
             'email': user.email
         })
+        
+class LoginView(ObtainAuthToken): 
+   def post(self, request, *args, **kwargs):
+      loginClass = EmailOrUsernameAuthentication();
+      data = loginClass.auth(self,request)
+      return Response(data)
         
 """
 Return a JSON of all Contacts
@@ -195,3 +201,36 @@ class categoryAPIDetail(APIView):
         category = Category.objects.filter(id = pk)           
         categoryData=getSerializedCategory(category[0],False)           
         return Response(categoryData)
+
+
+class EmailOrUsernameAuthentication(authentication.BaseAuthentication):
+   # def authenticate(self, request):
+    def auth(self, request):
+        # Versuchen Sie zuerst, Benutzer per E-Mail zu authentifizieren
+        email = request.data.get('email')
+        User = get_user_model()
+        if email:
+            try:
+                  user = User.objects.get(email=email)
+                  token, created = Token.objects.get_or_create(user=user)
+                  return Response({
+                   'token': token.key,
+                    'user_id': user.pk,
+                    'email': user.email
+                     })
+                
+            except User.DoesNotExist:
+                pass
+
+        # Falls keine Übereinstimmung gefunden wurde, versuchen Sie es mit dem Benutzernamen
+        # username = request.data.get('username')
+        # if username:
+        #     try:
+        #         user = User.objects.get(username=username)
+        #         return (user, None)
+        #     except User.DoesNotExist:
+        #         pass
+
+        # Wenn weder E-Mail noch Benutzername angegeben wurden oder keine Übereinstimmung gefunden wurde,
+        # geben Sie eine Authentifizierungsfehlermeldung zurück
+        raise exceptions.AuthenticationFailed('Unable to authenticate with provided credentials.')
