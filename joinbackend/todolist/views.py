@@ -208,10 +208,11 @@ class EmailOrUsernameAuthentication(authentication.BaseAuthentication):
     def auth(self, request):
         # Versuchen Sie zuerst, Benutzer per E-Mail zu authentifizieren
         email = request.data.get('email')
+        password = request.data.get('password')
         User = get_user_model()
         if email:
             try:
-                  user = User.objects.get(email=email)
+                  user = User.objects.get(email=email, password = password)
                   token, created = Token.objects.get_or_create(user=user)
                   return Response({
                    'token': token.key,
