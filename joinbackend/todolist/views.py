@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from .serializers import TodoItemSerializer,ContactsSerializer,CategorySerializer#,ContactAssigmentSerializer
+from .serializers import TodoItemSerializer,ContactsSerializer,CategorySerializer,UserSerializer#,ContactAssigmentSerializer
 #from django.contrib.auth.models import User
 from .serializers import RegisterSerializer
 from rest_framework import generics
@@ -60,7 +60,8 @@ class ContactsView(APIView):
     permission_classes =[]#[IsAuthenticated]
 
     def get(self, request, format=None):
-        contacts = Contacts.objects.all()
+        #contacts = Contacts.objects.all()
+        contacts = Contacts.objects.filter(user_id = 2)
         serializer = ContactsSerializer(contacts, many=True)
         return Response(serializer.data)  
     
@@ -81,7 +82,29 @@ class Logout_view(APIView):
         logout(request)   
         return Response('ok')
   
+
+class User_viewAPIDetail(APIView):    
+    authentication_classes =[TokenAuthentication]
+    permission_classes =[IsAuthenticated]
     
+    def get(self, request,pk):
+        print('call get user')
+        user = User.objects.filter(id = pk) 
+        #user = User.objects.all()             
+        serializer = UserSerializer(user, many=True)       
+        userData = serializer.data[0] 
+        return Response(userData) 
+    
+class User_viewAPI(APIView):    
+    authentication_classes =[TokenAuthentication]
+    permission_classes =[IsAuthenticated]
+    
+    def get(self, request):
+        print('call get user')    
+        user = User.objects.all()             
+        serializer = UserSerializer(user, many=True)       
+        userData = serializer.data 
+        return Response(userData)       
 # def createTodoView(request):   
 #     return render(request,'createTask.html')
 
@@ -150,6 +173,7 @@ class createTodoViewAPIDetail(APIView):
          todo.title = data['title']
          todo.description = data['description']
          todo.date = data['date']
+         todo.color = data['color']
          todo.category = category
          todo.prio = data['prio']
          todo.state = data['state']       
@@ -186,12 +210,13 @@ class categoryAPI(generics.CreateAPIView):
     
     def create(self,request):
         data = json.loads(request.body)
+        print(data)
         category = Category.objects.create(title= data['title'], color = data['color']) 
         categoryData = getSerializedCategory(category,False)     
         return Response(categoryData)
     def get(self,request):
         category = Category.objects.all()         
-        categoryData = getSerializedCategory(category,True)                      
+        categoryData = getSerializedCategory(category,True)                             
         return Response(categoryData)
     
 class categoryAPIDetail(APIView):

@@ -32,7 +32,7 @@ class CustomUserManager(BaseUserManager):
 class User(AbstractUser):
      email=models.CharField(max_length=100,unique=True)      
      iconColor=models.CharField(max_length=30,default="#9327FF")
-     phone=models.CharField(max_length=30,default=' ')
+     phone=models.CharField(max_length=30,default=' ',null=True)
      username=models.CharField(max_length=100,default=' ')
      short= models.CharField(max_length=30,default='u')
      #reg= models.BooleanField(default=False) 
@@ -47,7 +47,7 @@ class User(AbstractUser):
 class Contacts(models.Model):
      email=models.CharField(max_length=100,default = "User@mail")      
      iconColor=models.CharField(max_length=30,default="#9327FF")
-     phone=models.CharField(max_length=30,default=' ')
+     phone=models.CharField(max_length=30,default=' ',null=True)
      name=models.CharField(max_length=100,default='user')
      short= models.CharField(max_length=30,default='u')
      #reg= models.BooleanField(default=False)  

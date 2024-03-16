@@ -9,7 +9,7 @@ from .models import Contacts
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User    
-        fields = ['id','first_name','last_name']
+        fields = ['id','username','email','iconColor','short']
         
 from .models import TodoItem
 from rest_framework import serializers
@@ -103,7 +103,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     )
     user.set_password(validated_data['password'])
     user.save()
-    contacts = Contacts.objects.create(email = user.email,iconColor="#9327FF",phone = "Phone Number ",name = user.first_name+user.last_name,short =user.first_name[0]+user.last_name[0],user = user)
+    #contacts = Contacts.objects.create(email = user.email,iconColor="#9327FF",phone = "Phone Number ",name = user.first_name+user.last_name,short =user.first_name[0]+user.last_name[0],user = user)
     return user
   
   # class TodoItemSerializerClass(serializers.ModelSerializer):
