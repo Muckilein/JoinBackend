@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TodoItem,Contacts,TaskAssignments,SubtasksList,Subtask,Category
+from .models import TodoItem,Contacts,TaskAssignments,SubtasksList,Subtask,Category,User#,ContactsUser
 
 # class TodoAdmin(admin.ModelAdmin):    
 #     fields = ('title','date','description','category' ,'color','prio','state','checked','assignments')  
@@ -8,18 +8,22 @@ from .models import TodoItem,Contacts,TaskAssignments,SubtasksList,Subtask,Categ
     
     
 class ContactAdmin(admin.ModelAdmin):    
-    fields = ( 'email' , 'name', 'iconColor' , 'phone', 'short','user')    
-    list_display = ('email' , 'name', 'iconColor' , 'phone', 'short','user')    
+    fields = ( 'email' , 'name', 'iconColor' , 'phone', 'short','user',)    
+    list_display = ('email' , 'name', 'iconColor' , 'phone', 'short','user',)    
     search_fields = ('name',)
     
-# class ContactAdmin(admin.ModelAdmin):    
-#     fields = ( 'email' , 'name', 'password')    
-#     list_display = ('email' , 'name', 'iconColor' , 'phone', 'short')    
-#     #search_fields = ('text',) 
+    
+
 
 # # Register your models here.
 #admin.site.register(TodoItem,TodoAdmin)
 admin.site.register(Contacts,ContactAdmin)
+
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin): 
+    fields = ( 'email' , 'username', 'iconColor' , 'phone', 'short')    
+    list_display = ('email' , 'username', 'iconColor' , 'phone', 'short')    
+    search_fields = ('username',)
 
 @admin.register(TodoItem)
 class TodoAdmin(admin.ModelAdmin): 
@@ -46,3 +50,9 @@ class SubtaskAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin): 
      fields = ('title','color')  #, ist wichtig
      list_display = ('title','color')       
+
+# @admin.register(ContactsUser)
+# class ContactsUserAdmin(admin.ModelAdmin): 
+#      fields = ('user','contacts')  #, ist wichtig
+#      list_display = ('user','contacts')     
+

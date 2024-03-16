@@ -1,6 +1,6 @@
 from django.shortcuts import render ,redirect
 from rest_framework import viewsets
-from .models import TodoItem,Contacts,TaskAssignments,Subtask,SubtasksList,Category
+from .models import TodoItem,Contacts,TaskAssignments,Subtask,SubtasksList,Category,User
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -8,8 +8,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from .serializers import TodoItemSerializer,ContactsSerializer,CategorySerializer
-from django.contrib.auth.models import User
+from .serializers import TodoItemSerializer,ContactsSerializer,CategorySerializer#,ContactAssigmentSerializer
+#from django.contrib.auth.models import User
 from .serializers import RegisterSerializer
 from rest_framework import generics
 from django.contrib.auth import logout
@@ -32,12 +32,13 @@ class TodoViewSet(viewsets.ModelViewSet):
 Loggs in a user with the given credentials.
 Returns a JSON with the token, user_id and email
 """
-class LoginView2(ObtainAuthToken): 
+class LoginView(ObtainAuthToken): 
    def post(self, request, *args, **kwargs):
+        print('call login')
         serializer = self.serializer_class(data=request.data,
-                                           context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
+                                           context={'request': request})       
+        serializer.is_valid(raise_exception=True)       
+        user = serializer.validated_data['user']             
         token, created = Token.objects.get_or_create(user=user)
         return Response({
             'token': token.key,
@@ -45,10 +46,10 @@ class LoginView2(ObtainAuthToken):
             'email': user.email
         })
         
-class LoginView(ObtainAuthToken): 
+class LoginView2(ObtainAuthToken): 
    def post(self, request, *args, **kwargs):
       loginClass = EmailOrUsernameAuthentication();
-      data = loginClass.auth(self,request)
+      data = loginClass.authenticate(request)
       return Response(data)
         
 """
@@ -141,7 +142,6 @@ class createTodoViewAPIDetail(APIView):
     def put(self, request,pk):
          print('call put')
          # wichtig in request.POST.get('title') sind nur Information gespeichert, die mit einem Form gepostet wurden
-         
          data = json.loads(request.body)
          print(data)      
          category = getCategory(data['category']['title'])        
@@ -189,7 +189,7 @@ class categoryAPI(generics.CreateAPIView):
         category = Category.objects.create(title= data['title'], color = data['color']) 
         categoryData = getSerializedCategory(category,False)     
         return Response(categoryData)
-    def get(self,reqiest):
+    def get(self,request):
         category = Category.objects.all()         
         categoryData = getSerializedCategory(category,True)                      
         return Response(categoryData)
@@ -202,10 +202,21 @@ class categoryAPIDetail(APIView):
         categoryData=getSerializedCategory(category[0],False)           
         return Response(categoryData)
 
+# class contactofUser(APIView):
+#     authentication_classes =[TokenAuthentication]
+#     permission_classes =[IsAuthenticated]
+#     def post(self,request):
+#         userId = request.data.get('userId') 
+#         print(userId)     
+#         contactsuser = ContactsUser.objects.filter(user_id = userId)                   
+#         contactsData = getSerializedContactsOfUsers(contactsuser,True) 
+#         print(contactsData)
+#         contacts =  Contacts.objects.filter(pk__in=contactsData['list'])
+#         serializer = ContactsSerializer(contacts, many=True)
+#         return Response(serializer.data)
 
 class EmailOrUsernameAuthentication(authentication.BaseAuthentication):
-   # def authenticate(self, request):
-    def auth(self, request):
+   def authenticate(self, request):    
         # Versuchen Sie zuerst, Benutzer per E-Mail zu authentifizieren
         email = request.data.get('email')
         password = request.data.get('password')

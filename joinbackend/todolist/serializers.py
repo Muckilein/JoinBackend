@@ -1,6 +1,6 @@
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group#, User
 from rest_framework import serializers
-from .models import TodoItem,Contacts,TaskAssignments,Subtask,Category,SubtasksList
+from .models import TodoItem,Contacts,TaskAssignments,Subtask,Category,SubtasksList,User #,ContactsUser
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from .models import Contacts
@@ -52,12 +52,21 @@ class SubtasksListSerializer(serializers.ModelSerializer):
         fields = '__all__'
       
 class AssignmentSerializer(serializers.ModelSerializer):
-    contact = ContactsNameSerializer (many=False)  
+    contact = ContactsSerializer (many=False)  
     todoitem = TodoNameSerializer (many=False) 
     class Meta:
         model = TaskAssignments
         #fields = '__all__'
         fields = ['contact','todoitem']
+        
+
+# class ContactAssigmentSerializer(serializers.ModelSerializer):
+#     contacts = ContactsNameSerializer (many=False)  
+#     user= UserSerializer (many=False) 
+#     class Meta:
+#         model = ContactsUser        
+#         fields = ['contacts','user']      
+  
 
 """
 Registers a new User, when all the given data are valid.
@@ -85,10 +94,11 @@ class RegisterSerializer(serializers.ModelSerializer):
     return attrs
   def create(self, validated_data):
     print(type(validated_data))
+   
     user = User.objects.create(
       username=validated_data['username'],
       email=validated_data['email'],
-      first_name=validated_data['first_name'],
+      first_name = validated_data['first_name'],
       last_name=validated_data['last_name']
     )
     user.set_password(validated_data['password'])

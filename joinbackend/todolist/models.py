@@ -1,24 +1,56 @@
 from django.db import models
 from datetime import date
 import datetime
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
 from django.conf import settings 
-
+from django.contrib.auth.models import AbstractUser,BaseUserManager
 #Create your models here.
-# class UserModel(models.Model):
-#      email=models.CharField(max_length=100,default = "User@mail")     
-#      user = models.ForeignKey(User, on_delete=models.CASCADE)     
-#      iconColor=models.CharField(max_length=30,default="#9327FF")
-#      phone=models.CharField(max_length=30,default='')
-#      name=models.CharField(max_length=100,default='user')
-#      short= models.CharField(max_length=30,default='u')   
-          
+
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(email, password, **extra_fields)
+
+
+class User(AbstractUser):
+     email=models.CharField(max_length=100,unique=True)      
+     iconColor=models.CharField(max_length=30,default="#9327FF")
+     phone=models.CharField(max_length=30,default=' ')
+     username=models.CharField(max_length=100,default=' ')
+     short= models.CharField(max_length=30,default='u')
+     #reg= models.BooleanField(default=False) 
+    
+     USERNAME_FIELD = "email"
+     REQUIRED_FIELDS = []
+     objects = CustomUserManager() 
+     def __str__(self):        
+        return  self.username    
+     
+               
 class Contacts(models.Model):
      email=models.CharField(max_length=100,default = "User@mail")      
      iconColor=models.CharField(max_length=30,default="#9327FF")
      phone=models.CharField(max_length=30,default=' ')
      name=models.CharField(max_length=100,default='user')
-     short= models.CharField(max_length=30,default='u') 
+     short= models.CharField(max_length=30,default='u')
+     #reg= models.BooleanField(default=False)  
      user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)   
      
      def __str__(self):
@@ -38,6 +70,13 @@ class Category(models.Model):
      
      def __str__(self):
         return self.title
+     
+# class ContactsUser(models.Model):
+#    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)   
+#    contacts = models.ForeignKey(Contacts, on_delete=models.CASCADE, null=True)
+   
+#    def __str__(self):
+#         return (self.user.username + self.contacts.name)
 
 class TodoItem(models.Model):
    title = models.CharField(max_length=100,default='')

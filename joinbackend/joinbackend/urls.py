@@ -20,7 +20,7 @@ from django.urls import path, include
 from todolist.views import TodoViewSet
 #from todolist.views import TodoItemsView
 from todolist.views import LoginView
-from todolist.views import ContactsView,RegisterView,createTodoViewAPI,Logout_view,createTodoViewAPIDetail,categoryAPI,categoryAPIDetail
+from todolist.views import ContactsView,RegisterView,createTodoViewAPI,Logout_view,createTodoViewAPIDetail,categoryAPI,categoryAPIDetail#,contactofUser
 
 router = routers.DefaultRouter()
 router.register(r'todo', TodoViewSet)
@@ -32,6 +32,7 @@ urlpatterns = [
     path('login/', LoginView.as_view()),
    # path('todos/', TodoItemsView.as_view()),
     path('contacts/', ContactsView.as_view()),
+   # path('contactsofuser/', contactofUser.as_view()),
     #path('assign/', TaskAssignmentsView.as_view()),
     path('registerAPI/', RegisterView.as_view(), name='auth_register'),
    # path('register/', registerPage),  #only for testing  is replaced by frontend

@@ -1,5 +1,5 @@
 
-from .serializers import AssignmentSerializer,ContactsNameSerializer,SubtasksSerializer,CategorySerializer,SubtasksListSerializer
+from .serializers import AssignmentSerializer,ContactsNameSerializer,SubtasksSerializer,CategorySerializer,SubtasksListSerializer#,ContactAssigmentSerializer
 from .models import TodoItem,Contacts,TaskAssignments,Subtask,SubtasksList,Category
 
 from rest_framework import authentication, exceptions
@@ -160,5 +160,14 @@ def getSerializedCategory(category,bool):
     return categoryData
     
 
+# def getSerializedContactsOfUsers(contacts,bool):
+#     serializer = ContactAssigmentSerializer(contacts, many=bool)       
+#     contactData = serializer.data  
+#     list =[]
+#     for c in contactData:
+#         list.append(c['contacts']['id'])
+#     return {'list':list} 
+    
 
 
+#Blog.objects.filter(pk__in=[1, 4, 7])
