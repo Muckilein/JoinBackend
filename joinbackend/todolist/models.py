@@ -48,14 +48,14 @@ class Contacts(models.Model):
      email=models.CharField(max_length=100,default = "User@mail")      
      iconColor=models.CharField(max_length=30,default="#9327FF")
      phone=models.CharField(max_length=30,default=' ',null=True)
-     name=models.CharField(max_length=100,default='user')
+     username=models.CharField(max_length=100,default='user')
      short= models.CharField(max_length=30,default='u')
      #reg= models.BooleanField(default=False)  
      user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)   
      
      def __str__(self):
           #return self.email + " "+  self.name  + " "+ self.iconColor +self.phone + " "+ self.short
-        return  self.name  
+        return  self.username  
              
 class Subtask(models.Model):
      checked = models.BooleanField(default= False)
@@ -82,7 +82,7 @@ class TodoItem(models.Model):
    title = models.CharField(max_length=100,default='')
    description = models.CharField(max_length=1000,default='')
    date = models.DateField(default=datetime.date.today)
-   assignments = models.ManyToManyField(Contacts,through='TaskAssignments') #Many-to-Many
+   assignments = models.ManyToManyField(User,through='TaskAssignments') #Many-to-Many
    subtask = models.ManyToManyField(Subtask,through='SubtasksList') #Many-to-Many
    #category = models.CharField(max_length=30,default='')
    category = models.ForeignKey(Category, on_delete=models.CASCADE)
@@ -96,10 +96,10 @@ class TodoItem(models.Model):
 
 class TaskAssignments(models.Model):
    todoitem = models.ForeignKey(TodoItem, on_delete=models.CASCADE)
-   contact = models.ForeignKey(Contacts, on_delete=models.CASCADE)
+   user = models.ForeignKey(User, on_delete=models.CASCADE)
    
    def __str__(self):
-       return self.contact.name
+       return self.user.username
    
 
 

@@ -16,11 +16,12 @@ Including another URLconf
 """
 from rest_framework import routers
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from todolist.views import TodoViewSet
 #from todolist.views import TodoItemsView
 from todolist.views import LoginView
-from todolist.views import ContactsView,RegisterView,createTodoViewAPI,Logout_view,createTodoViewAPIDetail,categoryAPI,categoryAPIDetail,User_viewAPI,User_viewAPIDetail#,contactofUser
+from todolist.views import ResetPasswordView,ContactsView,RegisterView,createTodoViewAPI,Logout_view,createTodoViewAPIDetail,categoryAPI,categoryAPIDetail,User_viewAPI,User_viewAPIDetail#,contactofUser
 
 router = routers.DefaultRouter()
 router.register(r'todo', TodoViewSet)
@@ -31,11 +32,18 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', LoginView.as_view()),
    # path('todos/', TodoItemsView.as_view()),
-    path('contacts/', ContactsView.as_view()),
+    #path('contacts/', ContactsView.as_view()),
+    path('contacts/<int:pk>/', ContactsView.as_view()),
     path('user/<int:pk>/', User_viewAPIDetail.as_view()),
     path('users/', User_viewAPI.as_view()),
    # path('contactsofuser/', contactofUser.as_view()),
     #path('assign/', TaskAssignmentsView.as_view()),
+    path('reset_password/', auth_views.PasswordResetView.as_view(),name='reset_password'),
+    path('reset_password_done/',  auth_views.PasswordResetDoneView.as_view(),name ='password_reset_done'),
+    path('reset_password/<uidb64>/<token>/',  auth_views.PasswordResetConfirmView.as_view(),name='password_reset_confirm'),
+    path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(),name='password_reset_complete'),
+    
+    path('reset/', ResetPasswordView.as_view(), name='custom_password_reset'),   
     path('registerAPI/', RegisterView.as_view(), name='auth_register'),
    # path('register/', registerPage),  #only for testing  is replaced by frontend
     path('logout/', Logout_view.as_view()),

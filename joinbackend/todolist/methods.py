@@ -1,6 +1,6 @@
 
-from .serializers import AssignmentSerializer,ContactsNameSerializer,SubtasksSerializer,CategorySerializer,SubtasksListSerializer#,ContactAssigmentSerializer
-from .models import TodoItem,Contacts,TaskAssignments,Subtask,SubtasksList,Category
+from .serializers import AssignmentSerializer,UserSerializer,SubtasksSerializer,CategorySerializer,SubtasksListSerializer#,ContactAssigmentSerializer
+from .models import TodoItem,Contacts,TaskAssignments,Subtask,SubtasksList,Category,User
 
 from rest_framework import authentication, exceptions
 from django.contrib.auth import get_user_model
@@ -18,8 +18,8 @@ def makeAssigments(ass, todo):
     for a in ass:
        if contain(data,a) ==False:
            print('ist created')
-           contact = Contacts.objects.filter(pk = a['id'])
-           TaskAssignments.objects.create(todoitem = todo,contact = contact[0])
+           user = User.objects.filter(pk = a['id'])
+           TaskAssignments.objects.create(todoitem = todo,user = user[0])
        else:
            print('exist')
            
@@ -28,7 +28,7 @@ returns wheather or not a given user is already in the assignment list of a task
 """
 def contain(databaseAss,a):
     for dataAss in databaseAss:
-        if dataAss['contact']['id']==a['id']:
+        if dataAss['user']['id']==a['id']:
             print('true')            
             return True    
     print('false')
@@ -36,7 +36,7 @@ def contain(databaseAss,a):
 
 def contain2(DBa,ass):
     for a in ass:
-        if a['id']== DBa['contact']['id'] :
+        if a['id']== DBa['user']['id'] :
            return True
     return False
 
@@ -108,12 +108,12 @@ def makeSubtask(subs, todo):
 Returns the name of a contscts with the given id
 """       
 def getContactsbyId(id):
-    contact = Contacts.objects.all()
-    serializerContact = ContactsNameSerializer(contact, many=True)
-    contactData = serializerContact.data
-    for c in  contactData:
-        if c['id']==id:
-          return c['name'] 
+    user = User.objects.all()
+    serializerContact = UserSerializer(user, many=True)
+    userData = serializerContact.data
+    for u in  userData:
+        if u['id']==id:
+          return u['username'] 
     return ''  
 
 """
@@ -134,8 +134,7 @@ def setAssignmentandSubs(t):
      if t['assignments'] !=[]:
                 x = len(t['assignments'])
                 for i in range(0, x):
-                   id = t['assignments'][i]                  
-                  # t['assignments'][i] = getContactsbyId(id) 
+                   id = t['assignments'][i]                
                    t['assignments'][i] = { 'id':id ,'name': getContactsbyId(id)} 
      if t['subtask'] !=[]:
                 x = len(t['subtask'])

@@ -1,9 +1,10 @@
 from django.contrib.auth.models import Group#, User
 from rest_framework import serializers
-from .models import TodoItem,Contacts,TaskAssignments,Subtask,Category,SubtasksList,User #,ContactsUser
+from .models import TodoItem,Contacts,TaskAssignments,Subtask,Category,SubtasksList,User 
+
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
-from .models import Contacts
+
 
 # class UserSerializer(serializers.HyperlinkedModelSerializer):
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -39,7 +40,7 @@ class ContactsSerializer(serializers.ModelSerializer):
 class ContactsNameSerializer(serializers.ModelSerializer): 
       class Meta:
         model = Contacts
-        fields = ['id','name']
+        fields = ['id','username']
         
 class SubtasksSerializer(serializers.ModelSerializer): 
       class Meta:
@@ -52,20 +53,15 @@ class SubtasksListSerializer(serializers.ModelSerializer):
         fields = '__all__'
       
 class AssignmentSerializer(serializers.ModelSerializer):
-    contact = ContactsSerializer (many=False)  
+    user = UserSerializer (many=False)  
     todoitem = TodoNameSerializer (many=False) 
     class Meta:
         model = TaskAssignments
         #fields = '__all__'
-        fields = ['contact','todoitem']
-        
+        fields = ['user','todoitem']
+       
 
-# class ContactAssigmentSerializer(serializers.ModelSerializer):
-#     contacts = ContactsNameSerializer (many=False)  
-#     user= UserSerializer (many=False) 
-#     class Meta:
-#         model = ContactsUser        
-#         fields = ['contacts','user']      
+
   
 
 """
@@ -82,7 +78,7 @@ class RegisterSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
     fields = ('username', 'password', 'password2',
-         'email', 'first_name', 'last_name')
+         'email', 'first_name', 'last_name','iconColor','short')
     extra_kwargs = {
       'first_name': {'required': True},
       'last_name': {'required': True}
@@ -99,7 +95,9 @@ class RegisterSerializer(serializers.ModelSerializer):
       username=validated_data['username'],
       email=validated_data['email'],
       first_name = validated_data['first_name'],
-      last_name=validated_data['last_name']
+      last_name=validated_data['last_name'],
+      iconColor=validated_data['iconColor'],
+      short=validated_data['short']
     )
     user.set_password(validated_data['password'])
     user.save()

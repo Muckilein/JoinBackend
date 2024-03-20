@@ -8,8 +8,8 @@ from .models import TodoItem,Contacts,TaskAssignments,SubtasksList,Subtask,Categ
     
     
 class ContactAdmin(admin.ModelAdmin):    
-    fields = ( 'email' , 'name', 'iconColor' , 'phone', 'short','user',)    
-    list_display = ('email' , 'name', 'iconColor' , 'phone', 'short','user',)    
+    fields = ( 'email' , 'username', 'iconColor' , 'phone', 'short','user',)    
+    list_display = ('email' , 'username', 'iconColor' , 'phone', 'short','user',)    
     search_fields = ('name',)
     
     
@@ -33,8 +33,8 @@ class TodoAdmin(admin.ModelAdmin):
      
 @admin.register(TaskAssignments)
 class TaskAssignmentsAdmin(admin.ModelAdmin): 
-     fields = ('todoitem','contact')  
-     list_display = ('todoitem','contact') 
+     fields = ('todoitem','user')  
+     list_display = ('todoitem','user') 
      
 @admin.register(SubtasksList)
 class SubtasksListAdmin(admin.ModelAdmin): 

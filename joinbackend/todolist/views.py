@@ -18,6 +18,23 @@ from datetime import date
 from . methods import *
 import json
 from django.views.generic.detail import DetailView
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.messages.views import SuccessMessageMixin
+
+
+class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
+    template_name = 'registration/password_reset.html'
+    email_template_name = 'registration/password_reset_email.html'
+    subject_template_name = 'registration/password_reset_subject.txt'
+    success_message = "We've emailed you instructions for setting your password, " \
+                      "if an account exists with the email you entered. You should receive them shortly." \
+                      " If you don't receive an email, " \
+                      "please make sure you've entered the address you registered with, and check your spam folder."
+    success_url = reverse_lazy('password_reset_done')
+    
+    def post(self,request):
+        pass
 
 # Create your views here.
 class TodoViewSet(viewsets.ModelViewSet):
@@ -59,11 +76,20 @@ class ContactsView(APIView):
     authentication_classes =[]#[TokenAuthentication]
     permission_classes =[]#[IsAuthenticated]
 
-    def get(self, request, format=None):
+    def get(self, request,pk):
         #contacts = Contacts.objects.all()
-        contacts = Contacts.objects.filter(user_id = 2)
+        contacts = Contacts.objects.filter(user_id = pk)
         serializer = ContactsSerializer(contacts, many=True)
-        return Response(serializer.data)  
+        return Response(serializer.data)
+    def post(self,request,pk):
+        data = json.loads(request.body)
+        user = User.objects.filter(id = pk)[0]
+       
+        contacts = Contacts.objects.create(email = data['email'],iconColor=data['iconColor'],phone = data['phone'],username = data['username'],short =data['short'],user = user)
+        serializer = ContactsSerializer(contacts, many=False)
+        return Response(serializer.data)
+       # return Response("ok")
+     
     
 
 """
@@ -227,18 +253,6 @@ class categoryAPIDetail(APIView):
         categoryData=getSerializedCategory(category[0],False)           
         return Response(categoryData)
 
-# class contactofUser(APIView):
-#     authentication_classes =[TokenAuthentication]
-#     permission_classes =[IsAuthenticated]
-#     def post(self,request):
-#         userId = request.data.get('userId') 
-#         print(userId)     
-#         contactsuser = ContactsUser.objects.filter(user_id = userId)                   
-#         contactsData = getSerializedContactsOfUsers(contactsuser,True) 
-#         print(contactsData)
-#         contacts =  Contacts.objects.filter(pk__in=contactsData['list'])
-#         serializer = ContactsSerializer(contacts, many=True)
-#         return Response(serializer.data)
 
 class EmailOrUsernameAuthentication(authentication.BaseAuthentication):
    def authenticate(self, request):    
