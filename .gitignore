@@ -3,3 +3,4 @@ db.sqlite3
 /migrations/
 !/migrations
 !/migrations/init.py
+joinbackend/settings.py
