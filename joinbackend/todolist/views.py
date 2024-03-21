@@ -33,8 +33,8 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
                       "please make sure you've entered the address you registered with, and check your spam folder."
     success_url = reverse_lazy('password_reset_done')
     
-    def post(self,request):
-        pass
+    # def post(self,request):
+    #     pass
 
 # Create your views here.
 class TodoViewSet(viewsets.ModelViewSet):

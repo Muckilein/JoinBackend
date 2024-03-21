@@ -149,13 +149,15 @@ REST_FRAMEWORK = {
     ]
 }
 
-EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
+#EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+#EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
 
-# Email Settings
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = ''
-# EMAIL_HOST_PASSWORD = 'your-email-App-password'
+#Email Settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.eclipso.de'
+EMAIL_PORT = 465# 587 #465
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'Muckielein@eclipso.de'
+EMAIL_HOST_PASSWORD = 'MuckiesTestAccount2000'
+# SERVER_EMAIL = EMAIL_HOST_USER
+# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
