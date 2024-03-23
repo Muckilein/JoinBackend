@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset your password</title>
+   
+
+<style>
+    .input-field {
+        width: 422px;
+        height: 51px;
+        font-size: 21px;
+        padding: 13px 21px 13px 21px;
+        gap: 10px;
+        border: 1px solid #d1d1d1;
+        box-sizing: border-box;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+    }
+</style>
+</head>
+
+<body>
+    <div  id="logo-container-reset-password">
+     
+    </div>
+
+    <div id="login-container">
+        <form class="form"  method="post">
+            {% csrf_token %}
+            <h1>Reset your password</h1>         
+               
+                 <hr>
+               
+                <label for="id_new_password1">New password:</label>
+                <input type="password" name="new_password1" autocomplete="new-password" required="" aria-describedby="id_new_password1_helptext" id="id_new_password1">
+                <label for="id_new_password2">New password confirmation:</label>
+                <input type="password" name="new_password2" autocomplete="new-password" required="" aria-invalid="true" id="id_new_password2">
+                {% comment %} {{form.as_p}} {% endcomment %}
+                <button type="submit">Reset Password</button>                 
+         
+       
+    </form>
+    <div id="infoBox">
+        <p id="infoText" style="padding-left: 91px;">
+             You reset your password
+        </p>
+    </div>
+    </div>
+    </div>
+
+
+</body>
+
+</html>
