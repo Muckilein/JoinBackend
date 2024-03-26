@@ -43,11 +43,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
+    'rest_framework',    
     'todolist',
     'rest_framework.authtoken',
     'rest_auth', 
-    'rest_auth.registration', 
+    'rest_auth.registration',
+    'django_rest_passwordreset', 
     # 'allauth',
     # 'allauth.account',     
     'corsheaders'
@@ -134,6 +135,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+#STATICFILES_DIRS = [BASE_DIR / ‘static’]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -158,6 +160,6 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT =  587 #465
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'mucki6412@gmail.com'
-EMAIL_HOST_PASSWORD = 'nljy diue plqa ugak'
+EMAIL_HOST_PASSWORD = 'atoh ynmm zlzo iekr'
 # SERVER_EMAIL = EMAIL_HOST_USER
 # DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
