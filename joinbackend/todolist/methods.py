@@ -11,10 +11,7 @@ If a given user is not already in the assignment list a new assignments for the 
 def makeAssigments(ass, todo):    
     taskAssignments = TaskAssignments.objects.filter(todoitem = todo)
     serializer = AssignmentSerializer(taskAssignments, many = True)
-    data = serializer.data
-    print("pint data")
-    print(data)
-    print(ass)
+    data = serializer.data   
     for a in ass:
        if contain(data,a) ==False:
            print('ist created')
@@ -55,28 +52,26 @@ def deleteAssigment(ass,todo):
            taskAss = taskAssignments[i]
            taskAss.delete()
 
-def containSub(DBa,subss):
-    print("DBA")
-    print(DBa)
-    print(subss)
-    for a in subss:      
-        if a['id']== DBa['subtask']:
-           return True
-    return False  
+# def containSub(DBa,subss):
+   
+#     for a in subss:      
+#         if a['id']== DBa['subtask']:
+#            return True
+#     return False  
  
 """
 Deletes all assignments that are no longer assigned to the given todo
 """
-def deleteSubtask(subss,todo):
-    subtask = SubtasksList.objects.filter(todoitem = todo)
-    serializer = SubtasksListSerializer(subtask, many = True)
-    databaseSubs = serializer.data   
-    i=-1
-    for dataSubs in databaseSubs:
-        i=i+1
-        if not containSub(dataSubs,subss):                 
-           task= subtask[i]
-           task.delete()
+# def deleteSubtask(subss,todo):
+#     subtask = SubtasksList.objects.filter(todoitem = todo)
+#     serializer = SubtasksListSerializer(subtask, many = True)
+#     databaseSubs = serializer.data   
+#     i=-1
+#     for dataSubs in databaseSubs:
+#         i=i+1
+#         if not containSub(dataSubs,subss):                 
+#            task= subtask[i]
+#            task.delete()
 
 
        
@@ -85,23 +80,33 @@ def deleteSubtask(subss,todo):
 Creates new subtasks with the information stored in subs.
 Creates new objects that stores that links the previously created subtask to the given task 
 """
-def makeSubtask(subs, todo):    
+def makeSubtask(subs, todo):
+    #t = TodoItem.objects.filter(pk = todo['id'])[0]
+    #t = todo #TodoItem.objects.all()[0] 
+    print('task')  
+      
     for s in subs:
-        if s['id']=='null':          
-            sub = Subtask.objects.create(title=s['title'], checked = s['checked'])        
-            sub.save()           
-            ass = SubtasksList.objects.create(todoitem = todo,subtask = sub)
-            subbis = SubtasksList.objects.create(todoitem = todo,subtask = sub)
-            print('SubtasksList new Object')
-            print(ass)
-            print('Save subtask')
-            subbis.subtask = sub
-            subbis.save()
-            ass.save()
+        if s['id']=='null': 
+                 
+            obj = Subtask.objects.filter (title = s['title']) 
+            
+            if len(obj) ==0:
+                print('not exist')
+                sub = Subtask.objects.create(title=s['title'], checked = s['checked'])              
+                todo.subtask.add(sub)
+            else:  
+             print('exist exist')                     
+             sub= Subtask.objects.filter(title = obj[0].title)[0]            
+             todo.subtask.add(sub)           
+            print('todooooo------------------oooo')
+         
+          
+      
         else:          
             su =  Subtask.objects.filter(pk = s['id'])[0]
             su.checked =  s['checked'] 
-            su.save() 
+            su.save()
+        todo.save()  
        
                                     
 """
@@ -130,7 +135,8 @@ Edits the inforamtion of assigments in the way, that not only the id of the user
 Edits the inforamtion the subtasks in the way, that not only the id of the subtask is given, but alo the title and wheather it is checked or not
 """   
 def setAssignmentandSubs(t):
-     print('call setAssignmentandSubs')
+     #print('call setAssignmentandSubs')
+    # print(t)
      if t['assignments'] !=[]:
                 x = len(t['assignments'])
                 for i in range(0, x):
@@ -144,7 +150,7 @@ def setAssignmentandSubs(t):
                    t['subtask'][i] = {'id':id, 'title': s['title'],'checked': s['checked'] } 
                    
 def setCategory(d):
-    print(d['category'])
+    
     id = d['category']
     cat = Category.objects.filter(id = id)[0]
     # serializer = CategorySerializer(cat, many=False)       

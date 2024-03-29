@@ -141,7 +141,10 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
         # 'reset_password_url': "{}?token={}".format(
         #     instance.request.build_absolute_uri(reverse('password_reset:reset-password-confirm')),
         #     reset_password_token.key)
-         'reset_password_url': "http://127.0.0.1:5500/html/reset-your-password.html?path={}&token={}".format(
+        #  'reset_password_url': "http://127.0.0.1:5500/html/reset-your-password.html?path={}&token={}".format(
+        #     instance.request.build_absolute_uri(reverse('password_reset:reset-password-confirm')),
+        #     reset_password_token.key)
+          'reset_password_url': "http://julia-wessolleck.developerakademie.net/Join-frontend/html/reset-your-password.html?path={}&token={}".format(
             instance.request.build_absolute_uri(reverse('password_reset:reset-password-confirm')),
             reset_password_token.key)
     }

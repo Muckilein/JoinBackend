@@ -63,11 +63,20 @@ class LoginView(ObtainAuthToken):
             'email': user.email
         })
         
-class LoginView2(ObtainAuthToken): 
-   def post(self, request, *args, **kwargs):
-      loginClass = EmailOrUsernameAuthentication();
-      data = loginClass.authenticate(request)
-      return Response(data)
+class GuestExist(APIView):
+     def get(self, request):
+        #contacts = Contacts.objects.all()
+        guest = User.objects.filter(email = 'Guest@mail.de')
+        if len(guest)>0:
+            return Response('YES')
+        else:
+            return Response('NO')
+        
+# class LoginView2(ObtainAuthToken): 
+#    def post(self, request, *args, **kwargs):
+#       loginClass = EmailOrUsernameAuthentication();
+#       data = loginClass.authenticate(request)
+#       return Response(data)
         
 """
 Return a JSON of all Contacts
@@ -83,12 +92,14 @@ class ContactsView(APIView):
         return Response(serializer.data)
     def post(self,request,pk):
         data = json.loads(request.body)
-        user = User.objects.filter(id = pk)[0]
-       
+        user = User.objects.filter(id = pk)[0]       
         contacts = Contacts.objects.create(email = data['email'],iconColor=data['iconColor'],phone = data['phone'],username = data['username'],short =data['short'],user = user)
         serializer = ContactsSerializer(contacts, many=False)
         return Response(serializer.data)
-       # return Response("ok")
+    def delete(self,request,pk):        
+         contact = Contacts.objects.filter(id= pk)[0]
+         contact.delete()
+         return Response('ok')
      
     
 
@@ -135,6 +146,20 @@ class User_viewAPI(APIView):
 #     return render(request,'createTask.html')
 
 
+
+class Test_viewAPI(APIView):    
+    
+    def get(self, request):
+        #user = User.objects.all()[0]
+        todo = TodoItem.objects.all()[1]
+        subtask = Subtask.objects.all()[1]
+        ass = SubtasksList.objects.create(todoitem = todo, subtask = subtask)
+        #todo.assignments.add(user)
+        ass.save()
+        #todo.subtask.add(subtask)
+      
+        return Response('ok')
+
 """
 create: Makes a nuew todo with the given data stored in request.bpdy
 get: returns a JSON array with alll the todos
@@ -156,7 +181,7 @@ class createTodoViewAPI(generics.CreateAPIView):
         #todo = TodoItem.objects.create(title = request.POST.get('title'),description=request.POST.get('description'),date=request.POST.get('date'),category=request.POST.get('category'),color=request.POST.get('color'),checked=False,prio=request.POST.get('prio'),state =request.POST.get('state'))
          todo = TodoItem.objects.create(title = data['title'],description=data['description'],date=data['date'],category= category,color= data['color'],checked=False,prio= data['prio'],state = data['state'])
          serializer = TodoItemSerializer(todo, many=False) # wenn hier True stehen würde kommt not iterable error
-         todoData = serializer.data
+         todoData = serializer.data         
          setCategory = (todoData)
          makeSubtask(data['subtask'],todo)
          makeAssigments(data['assignments'],todo)
@@ -188,11 +213,10 @@ class createTodoViewAPIDetail(APIView):
         setCategory(todoData)                 
         setAssignmentandSubs(todoData)              
         return Response(todoData)
-    def put(self, request,pk):
-         print('call put')
+    def put(self, request,pk):       
          # wichtig in request.POST.get('title') sind nur Information gespeichert, die mit einem Form gepostet wurden
          data = json.loads(request.body)
-         print(data)      
+           
          category = getCategory(data['category']['title'])        
        
          todo = TodoItem.objects.filter(id=pk)[0]
@@ -202,9 +226,11 @@ class createTodoViewAPIDetail(APIView):
          todo.color = data['color']
          todo.category = category
          todo.prio = data['prio']
-         todo.state = data['state']       
+         todo.state = data['state']
+         serializer = TodoItemSerializer(todo, many=False) # wenn hier True stehen würde kommt not iterable error
+         todoData = serializer.data         
          makeSubtask(data['subtask'],todo)
-         deleteSubtask(data['subtask'],todo)
+         #deleteSubtask(data['subtask'],todo)
          makeAssigments(data['assignments'],todo)
          deleteAssigment(data['assignments'],todo)         
          todo.save()

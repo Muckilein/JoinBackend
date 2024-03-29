@@ -21,7 +21,7 @@ from django.urls import path, include
 from todolist.views import TodoViewSet
 #from todolist.views import TodoItemsView
 from todolist.views import LoginView
-from todolist.views import ContactsView,RegisterView,createTodoViewAPI,Logout_view,createTodoViewAPIDetail,categoryAPI,categoryAPIDetail,User_viewAPI,User_viewAPIDetail#,contactofUser
+from todolist.views import GuestExist,Test_viewAPI,ContactsView,RegisterView,createTodoViewAPI,Logout_view,createTodoViewAPIDetail,categoryAPI,categoryAPIDetail,User_viewAPI,User_viewAPIDetail#,contactofUser
 
 router = routers.DefaultRouter()
 router.register(r'todo', TodoViewSet)
@@ -45,13 +45,14 @@ urlpatterns = [
    
     path('password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
      
+    path('test/', Test_viewAPI.as_view()),
+    path('guest/', GuestExist.as_view()),
     path('registerAPI/', RegisterView.as_view(), name='auth_register'),
     path('logout/', Logout_view.as_view()),
     path('createTodoAPI/', createTodoViewAPI.as_view()) ,    
     path('createTodoAPI/<int:pk>/', createTodoViewAPIDetail.as_view()) ,  
     path('categoryAPI/', categoryAPI.as_view()) ,  
     path('categoryAPI/<int:pk>/', categoryAPIDetail.as_view()) ,
-   # path('editTodoAPI/<int:pk>/', editTodoViewAPI.as_view())  
-    #path('auth/', include('rest_auth.urls')),
-    #path('auth/registration/', include('rest_auth.registration.urls')) 
+    
+ 
 ]
