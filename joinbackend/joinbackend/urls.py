@@ -18,34 +18,22 @@ from rest_framework import routers
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
-from todolist.views import TodoViewSet
-#from todolist.views import TodoItemsView
 from todolist.views import LoginView
-from todolist.views import GuestExist,Test_viewAPI,ContactsView,RegisterView,createTodoViewAPI,Logout_view,createTodoViewAPIDetail,categoryAPI,categoryAPIDetail,User_viewAPI,User_viewAPIDetail#,contactofUser
+from todolist.views import GuestExist,ContactsView,RegisterView,createTodoViewAPI,Logout_view,createTodoViewAPIDetail,categoryAPI,categoryAPIDetail,User_viewAPI,User_viewAPIDetail#,contactofUser
 
-router = routers.DefaultRouter()
-router.register(r'todo', TodoViewSet)
+#router = routers.DefaultRouter()
+#router.register(r'todo', TodoViewSet)
 #router.register(r'login', LoginView.as_view())
 
 urlpatterns = [
-    path('',include(router.urls)),
+    #path('',include(router.urls)),
     path('admin/', admin.site.urls),
     path('login/', LoginView.as_view()),
- 
+    path('password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')), 
+    
     path('contacts/<int:pk>/', ContactsView.as_view()),
     path('user/<int:pk>/', User_viewAPIDetail.as_view()),
-    path('users/', User_viewAPI.as_view()),
- 
- 
-    #path('reset_password/', auth_views.PasswordResetView.as_view(template_name ="reset.html"),name='reset_password'), # delete
-    # path('reset_password/', auth_views.PasswordResetView.as_view(template_name="reset_password.html"),name='reset_password'),    
-    # path('reset_password_sent/',  auth_views.PasswordResetDoneView.as_view(template_name ="reset_password_sent.html"),name ='password_reset_done'),
-    # path('reset_password/<uidb64>/<token>/',  auth_views.PasswordResetConfirmView.as_view(template_name ="reset.html"),name='password_reset_confirm'),
-    # path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(template_name="reset_password_complete.html"),name='password_reset_complete'),
-   
-    path('password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
-     
-    path('test/', Test_viewAPI.as_view()),
+    path('users/', User_viewAPI.as_view()), 
     path('guest/', GuestExist.as_view()),
     path('registerAPI/', RegisterView.as_view(), name='auth_register'),
     path('logout/', Logout_view.as_view()),
@@ -53,6 +41,12 @@ urlpatterns = [
     path('createTodoAPI/<int:pk>/', createTodoViewAPIDetail.as_view()) ,  
     path('categoryAPI/', categoryAPI.as_view()) ,  
     path('categoryAPI/<int:pk>/', categoryAPIDetail.as_view()) ,
+    #path('reset_password/', auth_views.PasswordResetView.as_view(template_name ="reset.html"),name='reset_password'), # delete
+    # path('reset_password/', auth_views.PasswordResetView.as_view(template_name="reset_password.html"),name='reset_password'),    
+    # path('reset_password_sent/',  auth_views.PasswordResetDoneView.as_view(template_name ="reset_password_sent.html"),name ='password_reset_done'),
+    # path('reset_password/<uidb64>/<token>/',  auth_views.PasswordResetConfirmView.as_view(template_name ="reset.html"),name='password_reset_confirm'),
+    # path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(template_name="reset_password_complete.html"),name='password_reset_complete'),
+   
     
  
 ]

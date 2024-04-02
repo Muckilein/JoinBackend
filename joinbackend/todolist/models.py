@@ -42,7 +42,7 @@ class User(AbstractUser):
      phone=models.CharField(max_length=30,default=' ',null=True)
      username=models.CharField(max_length=100,default=' ')
      short= models.CharField(max_length=30,default='u')
-     #reg= models.BooleanField(default=False) 
+     
     
      USERNAME_FIELD = "email"
      REQUIRED_FIELDS = []
@@ -56,9 +56,8 @@ class Contacts(models.Model):
      iconColor=models.CharField(max_length=30,default="#9327FF")
      phone=models.CharField(max_length=30,default=' ',null=True)
      username=models.CharField(max_length=100,default='user')
-     short= models.CharField(max_length=30,default='u')
-     #reg= models.BooleanField(default=False)  
-     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)   
+     short= models.CharField(max_length=30,default='u') 
+     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)       
      
      def __str__(self):
           #return self.email + " "+  self.name  + " "+ self.iconColor +self.phone + " "+ self.short
@@ -89,24 +88,24 @@ class TodoItem(models.Model):
    title = models.CharField(max_length=100,default='')
    description = models.CharField(max_length=1000,default='')
    date = models.DateField(default=datetime.date.today)
-   assignments = models.ManyToManyField(User,through='TaskAssignments') #Many-to-Many
+   assignments = models.ManyToManyField(Contacts,through='TaskAssignments') #Many-to-Many
    subtask = models.ManyToManyField(Subtask,through='SubtasksList') #Many-to-Many
    #category = models.CharField(max_length=30,default='')
    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-   color=models.CharField(max_length=30,default='')
-   checked = models.BooleanField(default=False)
+   color=models.CharField(max_length=30,default='')   
    prio = models.CharField(max_length=30,default='')
    state = models.CharField(max_length=30,default='')
+   userTodo = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='userTodo')
    
    def __str__(self):
         return self.title
 
 class TaskAssignments(models.Model):
    todoitem = models.ForeignKey(TodoItem, on_delete=models.CASCADE)
-   user = models.ForeignKey(User, on_delete=models.CASCADE)
+   contact = models.ForeignKey(Contacts, on_delete=models.CASCADE)
    
    def __str__(self):
-       return self.user.username
+       return self.contact.username
    
 
 
@@ -150,9 +149,7 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     }
     print(context)
 
-    # render email text
-    # email_html_message = render_to_string('email/user_reset_password.html', context)
-    # email_plaintext_message = render_to_string('email/user_reset_password.txt', context)
+    # render email text 
     email_html_message = render_to_string('user_reset_password.html', context)
     email_plaintext_message = render_to_string('user_reset_password.txt', context)
     print(email_html_message)

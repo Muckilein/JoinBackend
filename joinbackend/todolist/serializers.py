@@ -53,12 +53,12 @@ class SubtasksListSerializer(serializers.ModelSerializer):
         fields = '__all__'
       
 class AssignmentSerializer(serializers.ModelSerializer):
-    user = UserSerializer (many=False)  
+    contact = ContactsSerializer (many=False)  
     todoitem = TodoNameSerializer (many=False) 
     class Meta:
         model = TaskAssignments
         #fields = '__all__'
-        fields = ['user','todoitem']
+        fields = ['contact','todoitem']
        
 
 

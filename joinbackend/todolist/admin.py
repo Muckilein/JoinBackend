@@ -8,8 +8,8 @@ from .models import TodoItem,Contacts,TaskAssignments,SubtasksList,Subtask,Categ
     
     
 class ContactAdmin(admin.ModelAdmin):    
-    fields = ( 'email' , 'username', 'iconColor' , 'phone', 'short','user',)    
-    list_display = ('email' , 'username', 'iconColor' , 'phone', 'short','user',)    
+    fields = ( 'email' , 'username', 'iconColor' , 'phone', 'short','user')    
+    list_display = ('email' , 'username', 'iconColor' , 'phone', 'short','user')    
     search_fields = ('name',)
     
     
@@ -27,14 +27,14 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(TodoItem)
 class TodoAdmin(admin.ModelAdmin): 
-     fields = ('title','date','description','category' ,'color','prio','state','checked')  
-     list_display = ('title','date','description','category' ,'color','prio','state','checked')    
+     fields = ('title','date','description','category' ,'color','prio','state','userTodo',)  
+     list_display = ('title','date','description','category' ,'color','prio','state','userTodo',)    
      search_fields = ('title',)
      
 @admin.register(TaskAssignments)
 class TaskAssignmentsAdmin(admin.ModelAdmin): 
-     fields = ('todoitem','user')  
-     list_display = ('todoitem','user') 
+     fields = ('todoitem','contact')  
+     list_display = ('todoitem','contact') 
      
 @admin.register(SubtasksList)
 class SubtasksListAdmin(admin.ModelAdmin): 

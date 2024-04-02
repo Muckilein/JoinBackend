@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from .serializers import TodoItemSerializer,ContactsSerializer,CategorySerializer,UserSerializer#,ContactAssigmentSerializer
+from .serializers import TodoItemSerializer,ContactsSerializer,CategorySerializer,UserSerializer
 #from django.contrib.auth.models import User
 from .serializers import RegisterSerializer
 from rest_framework import generics
@@ -23,26 +23,13 @@ from django.contrib.auth.views import PasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
 
 
-# class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
-#     template_name = 'registration/reset_password.html'
-#     email_template_name = 'registration/password_reset_email.html'
-#     subject_template_name = 'registration/password_reset_subject.txt'
-#     success_message = "We've emailed you instructions for setting your password, " \
-#                       "if an account exists with the email you entered. You should receive them shortly." \
-#                       " If you don't receive an email, " \
-#                       "please make sure you've entered the address you registered with, and check your spam folder."
-#     success_url = reverse_lazy('password_reset_done')
-    
-    # def post(self,request):
-    #     pass
-
 # Create your views here.
-class TodoViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = TodoItem.objects.all() #.order_by('date')
-    serializer_class = TodoItemSerializer
+# class TodoViewSet(viewsets.ModelViewSet):
+#     """
+#     API endpoint that allows users to be viewed or edited.
+#     """
+#     queryset = TodoItem.objects.all() #.order_by('date')
+#     serializer_class = TodoItemSerializer
 
 
 """
@@ -50,8 +37,7 @@ Loggs in a user with the given credentials.
 Returns a JSON with the token, user_id and email
 """
 class LoginView(ObtainAuthToken): 
-   def post(self, request, *args, **kwargs):
-        print('call login')
+   def post(self, request, *args, **kwargs):       
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})       
         serializer.is_valid(raise_exception=True)       
@@ -64,75 +50,84 @@ class LoginView(ObtainAuthToken):
         })
         
 class GuestExist(APIView):
-     def get(self, request):
-        #contacts = Contacts.objects.all()
+     def get(self, request):       
         guest = User.objects.filter(email = 'Guest@mail.de')
         if len(guest)>0:
             return Response('YES')
         else:
             return Response('NO')
         
-# class LoginView2(ObtainAuthToken): 
-#    def post(self, request, *args, **kwargs):
-#       loginClass = EmailOrUsernameAuthentication();
-#       data = loginClass.authenticate(request)
-#       return Response(data)
         
-"""
-Return a JSON of all Contacts
-"""       
+     
 class ContactsView(APIView):
-    authentication_classes =[]#[TokenAuthentication]
-    permission_classes =[]#[IsAuthenticated]
+    """
+    Return a JSON of all Contacts
+    """  
+    authentication_classes =[TokenAuthentication]
+    permission_classes =[IsAuthenticated]
 
-    def get(self, request,pk):
-        #contacts = Contacts.objects.all()
-        contacts = Contacts.objects.filter(user_id = pk)
+    def get(self, request,pk):      
+        user = request.user  
+        contacts = Contacts.objects.filter(user = user)
         serializer = ContactsSerializer(contacts, many=True)
         return Response(serializer.data)
     def post(self,request,pk):
-        data = json.loads(request.body)
-        user = User.objects.filter(id = pk)[0]       
+        data = json.loads(request.body)       
+        user = request.user      
         contacts = Contacts.objects.create(email = data['email'],iconColor=data['iconColor'],phone = data['phone'],username = data['username'],short =data['short'],user = user)
         serializer = ContactsSerializer(contacts, many=False)
         return Response(serializer.data)
+    def put(self,request,pk):
+        data = json.loads(request.body)
+        contact = Contacts.objects.filter(id = pk)[0] 
+        contact.email = data['email']
+        contact.username = data['username']
+        contact.phone = data['phone']
+        contact.save()
+        return Response('ok')
     def delete(self,request,pk):        
          contact = Contacts.objects.filter(id= pk)[0]
          contact.delete()
-         return Response('ok')
-     
+         return Response('ok')     
     
 
-"""
-Registers a User when the given data are correct
-"""
+
 class RegisterView(generics.CreateAPIView):
+    """
+    Registers a User when the given data are correct
+    """
     queryset = User.objects.all()
     permission_classes = []
     serializer_class = RegisterSerializer
 
-"""
-Renders the login page
-"""
+
 class Logout_view(APIView):
+    """
+    Renders the login page
+    """
     def get(self, request, format=None):
         logout(request)   
         return Response('ok')
   
 
-class User_viewAPIDetail(APIView):    
+class User_viewAPIDetail(APIView):  
+    """
+    Returns a user with a given primary key
+    """  
     authentication_classes =[TokenAuthentication]
     permission_classes =[IsAuthenticated]
     
     def get(self, request,pk):
         print('call get user')
-        user = User.objects.filter(id = pk) 
-        #user = User.objects.all()             
+        user = User.objects.filter(id = pk)                  
         serializer = UserSerializer(user, many=True)       
         userData = serializer.data[0] 
         return Response(userData) 
     
-class User_viewAPI(APIView):    
+class User_viewAPI(APIView): 
+    """
+    Returns a all users with a given primary key
+    """     
     authentication_classes =[TokenAuthentication]
     permission_classes =[IsAuthenticated]
     
@@ -141,34 +136,18 @@ class User_viewAPI(APIView):
         user = User.objects.all()             
         serializer = UserSerializer(user, many=True)       
         userData = serializer.data 
-        return Response(userData)       
-# def createTodoView(request):   
-#     return render(request,'createTask.html')
+        return Response(userData)     
 
 
 
-class Test_viewAPI(APIView):    
-    
-    def get(self, request):
-        #user = User.objects.all()[0]
-        todo = TodoItem.objects.all()[1]
-        subtask = Subtask.objects.all()[1]
-        ass = SubtasksList.objects.create(todoitem = todo, subtask = subtask)
-        #todo.assignments.add(user)
-        ass.save()
-        #todo.subtask.add(subtask)
-      
-        return Response('ok')
-
-"""
-create: Makes a nuew todo with the given data stored in request.bpdy
-get: returns a JSON array with alll the todos
-"""
 class createTodoViewAPI(generics.CreateAPIView):
-    print('call createTodoViewAPI')  
+    """
+    create: Makes a nuew todo with the given data stored in request.bpdy
+    get: returns a JSON array with alll the todos
+    """
     authentication_classes =[TokenAuthentication]
     permission_classes =[IsAuthenticated]
-    #todo = TodoItem.objects.create(title = 'Test1',description="test1",date=date.today(),category='Sales',color='#ab234',checked=False,prio='1',state ='1')
+    
     queryset = TodoItem.objects.all()
     permission_classes = []
     serializer_class = TodoItemSerializer  
@@ -177,9 +156,9 @@ class createTodoViewAPI(generics.CreateAPIView):
          print('call create')
          # wichtig in request.POST.get('title') sind nur Information gespeichert, die mit einem Form gepostet wurden 
          data = json.loads(request.body) 
-         category = getCategory(data['category']['title'])    
-        #todo = TodoItem.objects.create(title = request.POST.get('title'),description=request.POST.get('description'),date=request.POST.get('date'),category=request.POST.get('category'),color=request.POST.get('color'),checked=False,prio=request.POST.get('prio'),state =request.POST.get('state'))
-         todo = TodoItem.objects.create(title = data['title'],description=data['description'],date=data['date'],category= category,color= data['color'],checked=False,prio= data['prio'],state = data['state'])
+         userTodo = request.user
+         category = getCategory(data['category']['title'])  
+         todo = TodoItem.objects.create(title = data['title'],userTodo = userTodo,description=data['description'],date=data['date'],category= category,color= data['color'],prio= data['prio'],state = data['state'])
          serializer = TodoItemSerializer(todo, many=False) # wenn hier True stehen würde kommt not iterable error
          todoData = serializer.data         
          setCategory = (todoData)
@@ -189,7 +168,8 @@ class createTodoViewAPI(generics.CreateAPIView):
          return Response(todoData)
     # Wird autimatisch bei GET aufgerufen  
     def get(self, request, format=None):
-        todos = TodoItem.objects.all()       
+        userTodo = request.user
+        todos = TodoItem.objects.filter(userTodo = userTodo)       
         serializer = TodoItemSerializer(todos, many=True)       
         todoData = serializer.data
         for t in todoData: 
@@ -197,11 +177,12 @@ class createTodoViewAPI(generics.CreateAPIView):
             setAssignmentandSubs(t)              
         return Response(serializer.data) 
 
-"""
-get: returns the JSON data of a todo with the given id
-put: edits and returns an existing todo with the given id. 
-"""
+
 class createTodoViewAPIDetail(APIView):
+    """
+    get: returns the JSON data of a todo with the given id
+    put: edits and returns an existing todo with the given id. 
+    """
     authentication_classes =[TokenAuthentication]
     permission_classes =[IsAuthenticated]
     
@@ -215,10 +196,8 @@ class createTodoViewAPIDetail(APIView):
         return Response(todoData)
     def put(self, request,pk):       
          # wichtig in request.POST.get('title') sind nur Information gespeichert, die mit einem Form gepostet wurden
-         data = json.loads(request.body)
-           
-         category = getCategory(data['category']['title'])        
-       
+         data = json.loads(request.body)           
+         category = getCategory(data['category']['title'])   
          todo = TodoItem.objects.filter(id=pk)[0]
          todo.title = data['title']
          todo.description = data['description']
@@ -244,8 +223,9 @@ class createTodoViewAPIDetail(APIView):
          resp=todo.delete()         
          return Response(resp)
 
-def getCategory(t):
-     cat = Category.objects.filter(title = t)      
+def getCategory(t):       
+     cat = Category.objects.filter(title = t) 
+          
      if len(cat)==0:
          category = Category.objects.create(title= t)
          return category           
@@ -254,6 +234,10 @@ def getCategory(t):
        return category
 
 class categoryAPI(generics.CreateAPIView):
+    """
+    get: returns the JSON data of all categorys
+    create: creates a new category
+    """
     queryset = Category.objects.all()
     permission_classes = []
     serializer_class = CategorySerializer
@@ -272,6 +256,9 @@ class categoryAPI(generics.CreateAPIView):
         return Response(categoryData)
     
 class categoryAPIDetail(APIView):
+    """
+    get: returns the JSON data of a categoorys with the given id    
+    """
     authentication_classes =[TokenAuthentication]
     permission_classes =[IsAuthenticated]
     def get(self,request,pk):
@@ -279,35 +266,3 @@ class categoryAPIDetail(APIView):
         categoryData=getSerializedCategory(category[0],False)           
         return Response(categoryData)
 
-
-class EmailOrUsernameAuthentication(authentication.BaseAuthentication):
-   def authenticate(self, request):    
-        # Versuchen Sie zuerst, Benutzer per E-Mail zu authentifizieren
-        email = request.data.get('email')
-        password = request.data.get('password')
-        User = get_user_model()
-        if email:
-            try:
-                  user = User.objects.get(email=email, password = password)
-                  token, created = Token.objects.get_or_create(user=user)
-                  return Response({
-                   'token': token.key,
-                    'user_id': user.pk,
-                    'email': user.email
-                     })
-                
-            except User.DoesNotExist:
-                pass
-
-        # Falls keine Übereinstimmung gefunden wurde, versuchen Sie es mit dem Benutzernamen
-        # username = request.data.get('username')
-        # if username:
-        #     try:
-        #         user = User.objects.get(username=username)
-        #         return (user, None)
-        #     except User.DoesNotExist:
-        #         pass
-
-        # Wenn weder E-Mail noch Benutzername angegeben wurden oder keine Übereinstimmung gefunden wurde,
-        # geben Sie eine Authentifizierungsfehlermeldung zurück
-        raise exceptions.AuthenticationFailed('Unable to authenticate with provided credentials.')
