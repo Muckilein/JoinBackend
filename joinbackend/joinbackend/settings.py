@@ -28,9 +28,9 @@ DEBUG = True
 
 #AUTH_USER_MODEL = 'todolist.User'
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','https://julia-wessolleck.developerakademie.net']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','https://julia-wessolleck.developerakademie.net','https://julia-developer.de']
 
-CORS_ALLOWED_ORIGINS = ['http://localhost:4200','http://localhost:5500','http://127.0.0.1:5500','https://julia-wessolleck.developerakademie.net']
+CORS_ALLOWED_ORIGINS = ['http://localhost:4200','http://localhost:5500','http://127.0.0.1:5500','https://julia-wessolleck.developerakademie.net','https://julia-developer.de']
 # Application definition
 CORS_ALLOWED_ALL_ORIGINS = True
 
